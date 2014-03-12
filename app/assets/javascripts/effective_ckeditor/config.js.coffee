@@ -16,14 +16,14 @@ CKEDITOR.editorConfig = (config) ->
     ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'],
     ['TextColor', 'BGColor']
     ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
-    ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv'],
+    ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv']
   ]
 
   config.toolbar_simple = [
     ['Save', '-', 'NewPage'], 
     ['Undo', 'Redo'],
     ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord'],
-    ['Find', 'Replace', '-', 'SelectAll'],
+    ['Find', 'Replace', '-', 'SelectAll']
   ]
 
   config.toolbar_snippets = [

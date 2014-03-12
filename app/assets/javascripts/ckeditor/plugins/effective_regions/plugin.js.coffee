@@ -2,15 +2,22 @@ effectiveRegionsSave = {
   exec: (editor) ->
     data = {}
 
-    console.log CKEDITOR.instances.length
+    for name, instance of CKEDITOR.instances # All CKEditors on the whole page
+      data[name] = 
+        content: instance.getData()
 
-    for instance, value of CKEDITOR.instances # All CKEditors on the whole page
-      console.log "instance"
-      console.log instance
-      console.log value
-      data[instance] = instance.getData()
+    url = window.location.protocol + '//' + window.location.host + '/edit' + window.location.pathname
 
-    console.log data
+    $.ajax
+      url: url
+      type: 'PUT'
+      dataType: 'json'
+      data: 
+        effective_regions: data
+      async: false
+      success: (data) -> 
+        console.log 'success!'
+        console.log data
 }
 
 CKEDITOR.plugins.add 'effective_regions',
@@ -23,12 +30,3 @@ CKEDITOR.plugins.add 'effective_regions',
       toolbar: 'document'
 
     editor.addCommand('effectiveRegionsSave', effectiveRegionsSave)
-
-
- # var $editors = $("textarea.ckeditor");
- #    if ($editors.length) {
- #        $editors.each(function() {
- #            var instance = CKEDITOR.instances[$(this).attr("id")];
- #            if (instance) { $(this).val(instance.getData()); }
- #        });
- #    }
