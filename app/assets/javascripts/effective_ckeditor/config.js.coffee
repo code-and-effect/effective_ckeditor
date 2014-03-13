@@ -3,6 +3,8 @@ CKEDITOR.editorConfig = (config) ->
 
   config.extraPlugins = 'effective_regions'
 
+  config.format_tags = 'p;h1;h2;h3;h4;pre'
+
   config.toolbar_full = [
     ['Save','-', 'NewPage'], 
     ['Undo', 'Redo'],
@@ -23,7 +25,8 @@ CKEDITOR.editorConfig = (config) ->
     ['Save', '-', 'NewPage'], 
     ['Undo', 'Redo'],
     ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord'],
-    ['Find', 'Replace', '-', 'SelectAll']
+    ['Find', 'Replace', '-', 'SelectAll'],
+    ['Sourcedialog', '-', 'ShowBlocks']
   ]
 
   config.toolbar_snippets = [
