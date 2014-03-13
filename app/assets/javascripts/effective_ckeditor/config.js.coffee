@@ -22,14 +22,15 @@ CKEDITOR.editorConfig = (config) ->
   ]
 
   config.toolbar_simple = [
-    ['Save', '-', 'NewPage'], 
+    ['Save'], 
     ['Undo', 'Redo'],
     ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord'],
     ['Find', 'Replace', '-', 'SelectAll'],
-    ['Sourcedialog', '-', 'ShowBlocks']
   ]
 
   config.toolbar_snippets = [
-    ['Source', '-', 'Bold', 'Italic']
+    ['Save'], 
+    ['Undo', 'Redo'],
+    ['Sourcedialog', '-', 'ShowBlocks']
   ]
 
