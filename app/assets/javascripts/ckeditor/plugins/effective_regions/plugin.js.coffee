@@ -50,22 +50,30 @@ Snippets = {
         async: false
         complete: (data) -> Snippets.snippets = data.responseJSON
     @snippets
-}
 
-Snippet = {
   build: (editor, name, values) ->
     snippet = {}
 
+    snippet['configured'] = false
     snippet['template'] = values.template
     snippet['dialog_url'] = values.dialog_url
     snippet['dialog'] = name if values.dialog_url
     snippet['requiredContent'] = "div(#{name})"
+    snippet['upcast'] = (element) -> element.name == 'div' && element.hasClass(name + '_snippet')
 
-    snippet['upcast'] = (element) -> element.name == 'div' && element.hasClass(name + '-snippet')
+    snippet['loadTemplate'] = (widget) ->
+      $.ajax
+        url: '/effective_regions/snippet'
+        type: 'GET'
+        data: {effective_regions: {name: widget.name, data: widget.data}}
+        async: false
+        complete: (data) -> $(widget.wrapper.$).find('div.cke_widget_element').html(data.responseText)
+
     snippet['init'] = ->
-      console.log "init #{name}"
-    snippet['data'] = ->
-      console.log "data #{name}"
+      this.on 'dialog', (evt) -> @configured = true
+      this.on 'data', (evt) -> @loadTemplate(evt.sender) if @configured
+
+    snippet['data'] = -> 
 
     snippet
 }
@@ -85,8 +93,7 @@ CKEDITOR.plugins.add 'effective_regions',
 
     # Snippets
     for name, values of Snippets.all()
-      snippet = Snippet.build(editor, name, values)
-      console.log snippet
+      snippet = Snippets.build(editor, name, values)
 
       editor.widgets.add(name, snippet)
       CKEDITOR.dialog.add(name, snippet.dialog_url) if snippet.dialog_url
