@@ -53,13 +53,21 @@ Snippets = {
 }
 
 Snippet = {
-  init: (editor, name, snippet) ->
-    {
-      template: snippet.template
+  build: (editor, name, values) ->
+    snippet = {}
 
-      upcast: (element) ->
-        element.name == 'div'
-    }
+    snippet['template'] = values.template
+    snippet['dialog_url'] = values.dialog_url
+    snippet['dialog'] = name if values.dialog_url
+    snippet['requiredContent'] = "div(#{name})"
+
+    snippet['upcast'] = (element) -> element.name == 'div' && element.hasClass(name + '-snippet')
+    snippet['init'] = ->
+      console.log "init #{name}"
+    snippet['data'] = ->
+      console.log "data #{name}"
+
+    snippet
 }
 
 CKEDITOR.plugins.add 'effective_regions',
@@ -76,12 +84,16 @@ CKEDITOR.plugins.add 'effective_regions',
     Regions.initSnippetsRegion(editor) if editor.config.toolbar == 'snippets'
 
     # Snippets
-    for snippet, values of Snippets.all()
-      editor.widgets.add(snippet, Snippet.init(editor, snippet, values))
+    for name, values of Snippets.all()
+      snippet = Snippet.build(editor, name, values)
+      console.log snippet
 
-      editor.config.toolbar_full[editor.config.toolbar_full.length-1].items.push(snippet)
-      editor.config.toolbar_snippets[editor.config.toolbar_snippets.length-1].items.push(snippet)
-      editor.ui.addButton snippet, {label: 'Insert ' + snippet, command: snippet}
+      editor.widgets.add(name, snippet)
+      CKEDITOR.dialog.add(name, snippet.dialog_url) if snippet.dialog_url
+
+      editor.config.toolbar_full[editor.config.toolbar_full.length-1].items.push(name)
+      editor.config.toolbar_snippets[editor.config.toolbar_snippets.length-1].items.push(name)
+      editor.ui.addButton name, {label: 'Insert ' + name, command: name}
 
 
 
