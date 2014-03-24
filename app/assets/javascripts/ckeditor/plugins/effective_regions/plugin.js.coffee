@@ -1,9 +1,24 @@
 SaveAll = {
+  replaceSnippets: (html) ->
+    obj = $('<div>' + html + '</div>')
+    obj.find('div[data-snippet]').each -> $(this).replaceWith("[#{$(this).data('snippet')}]")
+    obj.html()
+
   exec: (editor) ->
     data = {}
 
     for name, instance of CKEDITOR.instances # All CKEditors on the whole page
-      data[name] = { content: instance.getData() }
+      snippets_data = {}
+      for name, widget of instance.widgets.instances
+        console.log name
+        console.log widget
+        console.log widget.data
+        snippets_data[widget.snippet_id()] = widget.data 
+
+      data[name] = {
+        content: @replaceSnippets(instance.getData())
+        snippets: snippets_data
+      }
 
     url = window.location.protocol + '//' + window.location.host + '/edit' + window.location.pathname
 
@@ -54,6 +69,7 @@ Snippets = {
   build: (editor, name, values) ->
     snippet = {}
 
+    snippet['snippet_id'] = -> $(this.wrapper.$).find('div.cke_widget_element').data('snippet')
     snippet['configured'] = false
     snippet['template'] = values.template
     snippet['dialog_url'] = values.dialog_url
@@ -73,7 +89,7 @@ Snippets = {
       this.on 'dialog', (evt) -> @configured = true
       this.on 'data', (evt) -> @loadTemplate(evt.sender) if @configured
 
-    snippet['data'] = -> 
+    #snippet['data'] = -> 
 
     snippet
 }
@@ -93,7 +109,7 @@ CKEDITOR.plugins.add 'effective_regions',
 
     # Snippets
     for name, values of Snippets.all()
-      snippet = Snippets.build(editor, name, values)
+      snippet = Snippets.build(editor, name, values) # Name might have to be Currentuserinfo
 
       editor.widgets.add(name, snippet)
       CKEDITOR.dialog.add(name, snippet.dialog_url) if snippet.dialog_url
