@@ -1,17 +1,17 @@
 SaveAll = {
   instanceData: (instance) ->
-    console.log 'INSTANCE DATA'
+    snippets = {} # This is the Data we're going to post to the server
+    snippet_ids = [] # This keeps track html classes we need to later replace
 
-    snippets = {}
-    snippet_ids = []
     for id, widget of instance.widgets.instances
-      snippet_id = "snippet_#{id}"
-      snippets[snippet_id] = widget.data
-      snippets[snippet_id]['class_name'] = widget.name
-      widget.element.addClass(snippet_id)
-      snippet_ids.push(snippet_id)
+      if widget.element.data('effective-snippet')
+        snippet_id = "snippet_#{id}"
+        snippets[snippet_id] = widget.data
+        snippets[snippet_id]['class_name'] = widget.name
+        widget.element.addClass(snippet_id)
+        snippet_ids.push(snippet_id)
 
-    # Replace HTML...
+    # Replace the entire widget <div>...</div> with [snippet_0]
     content = $('<div>' + instance.getData() + '</div>')
     content.find("div.#{snippet_id}").replaceWith("[#{snippet_id}]") for snippet_id in snippet_ids
 
@@ -22,9 +22,6 @@ SaveAll = {
     data[name] = @instanceData(instance) for name, instance of CKEDITOR.instances
 
     url = window.location.protocol + '//' + window.location.host + '/edit' + window.location.pathname
-
-    console.log "Saving..."
-    console.log data
 
     $.ajax
       url: url
@@ -71,10 +68,10 @@ Snippets = {
     snippet = {}
 
     snippet['configured'] = false
-    snippet['template'] = "<div class='#{name}_snippet' data-snippet-data='{}'></div>"
+    snippet['template'] = "<div class='#{name}_snippet' data-effective-snippet='{}'></div>"
     snippet['dialog_url'] = values.dialog_url
     snippet['dialog'] = name if values.dialog_url
-    snippet['requiredContent'] = "div(#{name})"
+    snippet['requiredContent'] = "div(#{name}_snippet)"
     snippet['upcast'] = (element) -> element.name == 'div' && element.hasClass(name + '_snippet')
 
     snippet['loadTemplate'] = (widget) ->
@@ -83,14 +80,10 @@ Snippets = {
         type: 'GET'
         data: {effective_regions: {name: widget.name, data: widget.data}}
         async: false
-        complete: (data) -> 
-          element = $(widget.wrapper.$).find('div.cke_widget_element')
-          element.html(data.responseText)
-          element.parent().prop('data-snippet-data', 'blah')
-          console.log element.parent().html()
+        complete: (data) -> $(widget.wrapper.$).find('div.cke_widget_element').html(data.responseText)
 
     snippet['init'] = ->
-      for k, v of $(this.wrapper.$).find('div.cke_widget_element').data('snippet-data')
+      for k, v of $(this.wrapper.$).find('div.cke_widget_element').data('effective-snippet')
         this.data[k] = v
 
       this.on 'dialog', (evt) -> @configured = true
