@@ -1,36 +1,21 @@
 SaveAll = {
-  replaceSnippets: (html) ->
-    obj = $('<div>' + html + '</div>')
-    obj.find('div[data-snippet-data]').each -> $(this).replaceWith("[#{$(this).data('snippet')}]")
-    obj.html()
-
   instanceData: (instance) ->
     console.log 'INSTANCE DATA'
 
     snippets = {}
-
+    snippet_ids = []
     for id, widget of instance.widgets.instances
-      console.log widget
-      snippet_id = $(widget.wrapper.$).data('cke-widget-id')
-      snippets["snippet_#{snippet_id}"] = widget.data
-      snippets["snippet_#{snippet_id}"]['class_name'] = widget.name
+      snippet_id = "snippet_#{id}"
+      snippets[snippet_id] = widget.data
+      snippets[snippet_id]['class_name'] = widget.name
+      widget.element.addClass(snippet_id)
+      snippet_ids.push(snippet_id)
 
-      snippet_data = $(widget.element.$).data('snippet-data')
-      snippet_data['id'] = snippet_id
-      $(widget.element.$).data('snippet-data', snippet_data)
+    # Replace HTML...
+    content = $('<div>' + instance.getData() + '</div>')
+    content.find("div.#{snippet_id}").replaceWith("[#{snippet_id}]") for snippet_id in snippet_ids
 
-      console.log "WIDGET HTML"
-      console.log $(widget.element.$).data('snippet-data')
-
-    content = instance.getData()
-
-    console.log "CONTENT:"
-    console.log content
-
-    {
-      content: instance.getData(),
-      snippets: snippets
-    }
+    {content: content.html(), snippets: snippets}
 
   exec: (editor) ->
     data = {}
@@ -47,7 +32,6 @@ SaveAll = {
       dataType: 'json'
       data: { effective_regions: data }
       async: false
-      success: (data) -> console.log 'success!'
 }
 
 Regions = {
@@ -87,7 +71,7 @@ Snippets = {
     snippet = {}
 
     snippet['configured'] = false
-    snippet['template'] = "<div></div>" # This gets replaced when we click on the Submit Dialog button
+    snippet['template'] = "<div class='#{name}_snippet' data-snippet-data='{}'></div>"
     snippet['dialog_url'] = values.dialog_url
     snippet['dialog'] = name if values.dialog_url
     snippet['requiredContent'] = "div(#{name})"
@@ -99,7 +83,11 @@ Snippets = {
         type: 'GET'
         data: {effective_regions: {name: widget.name, data: widget.data}}
         async: false
-        complete: (data) -> $(widget.wrapper.$).find('div.cke_widget_element').html(data.responseText)
+        complete: (data) -> 
+          element = $(widget.wrapper.$).find('div.cke_widget_element')
+          element.html(data.responseText)
+          element.parent().prop('data-snippet-data', 'blah')
+          console.log element.parent().html()
 
     snippet['init'] = ->
       for k, v of $(this.wrapper.$).find('div.cke_widget_element').data('snippet-data')
