@@ -18,20 +18,20 @@ CKEDITOR.editorConfig = (config) ->
     { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'] },
     { name: 'colors', items: ['TextColor', 'BGColor'] },
     { name: 'lists', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv'] },
-    { name: 'snippets', items: [] }  # Snippets should be the last Element
+    { name: 'snippets', items: ['InsertSnippet'] }  # Snippets should be the last Element
   ]
 
   config.toolbar_simple = [
-    ['Save'], 
+    ['Save', '-', 'NewPage'], 
     ['Undo', 'Redo'],
     ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord'],
     ['Find', 'Replace', '-', 'SelectAll'],
   ]
 
   config.toolbar_snippets = [
-    ['Save'], 
+    ['Save', '-', 'NewPage'], 
     ['Undo', 'Redo'],
     ['Sourcedialog', '-', 'ShowBlocks'],
-    { name: 'snippets', items: [] }   # Snippets should be the last Element
+    { name: 'snippets', items: ['InsertSnippet'] }   # Snippets should be the last Element
   ]
 

@@ -106,17 +106,27 @@ CKEDITOR.plugins.add 'effective_regions',
     Regions.initSnippetsRegion(editor) if editor.config.toolbar == 'snippets'
 
     # Snippets
-    for name, values of Snippets.all()
-      snippet = Snippets.build(editor, name, values) # Name might have to be Currentuserinfo
+    all_snippets = Snippets.all()
+
+    # Build the Insert Snippets Dropdown
+    editor.ui.addRichCombo('InsertSnippet',
+      label: 'Insert Snippet',
+      title: 'Insert Snippet',
+      panel: 
+        css: [ CKEDITOR.skin.getPath( 'editor' ) ].concat('width: 250px !important'),
+        multiSelect: false,
+      init: ->
+        for name, values of all_snippets
+          this.add name, "Insert #{name}", "Insert Snippet #{name}" # Command, Label, Tooltip
+      onClick: (value) -> editor.getCommand(value).exec(editor)
+    )
+
+    # Initialize all the Snippets as CKeditor widgets
+    for name, values of all_snippets
+      snippet = Snippets.build(editor, name, values)
 
       editor.widgets.add(name, snippet)
       CKEDITOR.dialog.add(name, snippet.dialog_url) if snippet.dialog_url
-
-      editor.config.toolbar_full[editor.config.toolbar_full.length-1].items.push(name)
-      editor.config.toolbar_snippets[editor.config.toolbar_snippets.length-1].items.push(name)
-      editor.ui.addButton name, {label: 'Insert ' + name, command: name}
-
-
 
 
 

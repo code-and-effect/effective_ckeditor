@@ -9,3 +9,23 @@
 {
   border: 2px dotted blue;
 }
+
+// This is the 'Insert Snippet' dropdown
+span.cke_combo__insertsnippet > a > .cke_combo_text {
+  width: 80px;
+}
+
+// The 'Insert Snippet' dropped down panel
+.cke_combopanel.cke_combopanel__insertsnippet {
+  width: 250px;
+}
+
+// The 'Styles' dropped down panel
+.cke_combopanel.cke_combopanel__styles {
+  width: 250px;
+}
+
+// The 'Styles' dropped down panel
+.cke_combopanel.cke_combopanel__format {
+  width: 180px;
+}
