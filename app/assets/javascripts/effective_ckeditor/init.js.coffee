@@ -13,13 +13,6 @@ init = ->
     $('body').addClass('effective-ckeditor-editting')
 
     ckeditors.each -> 
-      # switch $(this).data('effective-ckeditor')
-      #   when 'full' then console.log 'full'
-      #   when 'simple' then console.log 'simple'
-      #   when 'snippets' then console.log 'snippets'
-      #   else
-      #     console.log "unknown region type"
-
       CKEDITOR.inline(this.id,
         toolbar: $(this).data('effective-ckeditor')
         customConfig: '/assets/effective_ckeditor/config.js'
