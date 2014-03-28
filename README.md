@@ -1,21 +1,18 @@
-# Effective Mercury
+# Effective CKEditor
 
-Wraps up the Mercury Editor Javscript library (http://jejacks0n.github.io/mercury/) for use with other effective_* gems
+Wraps the CKEditor Javscript library (http://ckeditor.com/) for use with the effective_regions gem.
 
 Not intended for use as a standalone gem.
 
-Rails >= 3.2.x, Ruby >= 1.9.x.  Has not been tested/developed for Rails4.
+Rails 3.2.x and Rails 4.0.0 compatible.
 
 ## Usage
 
-Please see effective_pages (https://github.com/code-and-effect/effective_pages)
+Please see effective_regions (https://github.com/code-and-effect/effective_regions)
 
-## Mercury Editor
+## CKEditor 
 
-This gem packages only the javascript parts of the Mercury Editor 0.9.0 build.
-
-It does not use any of the rails implementation.
-
+This gem packages only the javascript parts of CKEditor and adds one plugin, effective_regions
 
 ## License
 
@@ -25,6 +22,6 @@ You are not granted rights or licenses to the trademarks of Code and Effect
 
 ## Credits
 
-The authors of this gem have nothing to do with the following awesome project:
+The authors of this gem have no relationship with the following awesome project:
 
-Mercury Editor (http://jejacks0n.github.io/mercury/ - https://github.com/jejacks0n/mercury)
+CKEditor (http://ckeditor.com/ - https://github.com/ckeditor/ckeditor-dev)

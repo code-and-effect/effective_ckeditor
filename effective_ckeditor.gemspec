@@ -10,8 +10,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Code and Effect"]
   s.email       = ["info@codeandeffect.com"]
   s.homepage    = "https://github.com/code-and-effect/effective_ckeditor"
-  s.summary     = "Minimalistic implementation of the Mercury Editor Javscript library."
-  s.description = "Wraps up the Mercury Editor Javscript library (http://jejacks0n.github.io/mercury/) for use with other effective_* gems. Not intended for use as a standalone gem."
+  s.summary     = "Packages the CKEditor text editor along with integration with the effective_regions gem"
+  s.description = "Wraps up the CKEditor Javscript library (http://ckeditor.com/) for use with the effective_regions gems. Not intended for use as a standalone gem."
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["spec/**/*"]
