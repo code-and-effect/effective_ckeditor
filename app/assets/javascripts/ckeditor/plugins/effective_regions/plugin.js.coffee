@@ -15,7 +15,14 @@ SaveAll = {
     content = $('<div>' + instance.getData() + '</div>')
     content.find("div.#{snippet_id}").replaceWith("[#{snippet_id}]") for snippet_id in snippet_ids
 
-    {content: content.html(), snippets: snippets}
+    # Process Snippet Only Regions
+    if instance.config.toolbar == 'snippets'
+      content = content.text()
+      content = content.replace(/\]\s+\[/gi, '') if content.indexOf('[snippet_') > -1
+    else
+      content = content.html()
+
+    {content: content, snippets: snippets}
 
   exec: (editor) ->
     data = {}
@@ -49,8 +56,6 @@ Regions = {
     editor.on 'afterPaste', (evt) -> editor.setData(editor.getData().replace( /<[^<|>]+?>/gi,'')) 
 
   initSnippetsRegion: (editor) ->
-    console.log 'snippet'
-    
     # Disable wrapping content with <p></p>.  This could break plugins.
     editor.config.autoParagraph = false
     editor.setActiveEnterMode(CKEDITOR.ENTER_BR, CKEDITOR.ENTER_BR)
@@ -60,7 +65,7 @@ Regions = {
 
     # Paste as plain text, but this doesn't work all the way
     editor.config.forcePasteAsPlainText = true
-    editor.on 'afterPaste', (evt) -> editor.setData(editor.getData().replace( /<[^<|>]+?>/gi,'')) 
+    editor.on 'afterPaste', (evt) -> editor.setData(editor.getData().replace(/<[^<|>]+?>/gi,'')) 
 }
 
 Snippets = {
