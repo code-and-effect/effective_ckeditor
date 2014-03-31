@@ -34,7 +34,7 @@ SaveAll = {
 Regions = {
   initSimpleRegion: (editor) ->
     # Disable all tags
-    filter = new CKEDITOR.filter('effective_region')
+    filter = new CKEDITOR.filter('no_tags_allowed')
     editor.setActiveFilter(filter)
 
     # Disable wrapping content with <p></p>.  This could break plugins.
@@ -49,6 +49,18 @@ Regions = {
     editor.on 'afterPaste', (evt) -> editor.setData(editor.getData().replace( /<[^<|>]+?>/gi,'')) 
 
   initSnippetsRegion: (editor) ->
+    console.log 'snippet'
+    
+    # Disable wrapping content with <p></p>.  This could break plugins.
+    editor.config.autoParagraph = false
+    editor.setActiveEnterMode(CKEDITOR.ENTER_BR, CKEDITOR.ENTER_BR)
+
+    # Disable enter button
+    editor.on 'key', (event) -> event.cancel() if event.data.keyCode == 13
+
+    # Paste as plain text, but this doesn't work all the way
+    editor.config.forcePasteAsPlainText = true
+    editor.on 'afterPaste', (evt) -> editor.setData(editor.getData().replace( /<[^<|>]+?>/gi,'')) 
 }
 
 Snippets = {
@@ -109,17 +121,16 @@ CKEDITOR.plugins.add 'effective_regions',
     all_snippets = Snippets.all()
 
     # Build the Insert Snippets Dropdown
-    editor.ui.addRichCombo('InsertSnippet',
+    editor.ui.addRichCombo 'InsertSnippet',
       label: 'Insert Snippet',
       title: 'Insert Snippet',
       panel: 
-        css: [ CKEDITOR.skin.getPath( 'editor' ) ].concat('width: 250px !important'),
+        css: [ CKEDITOR.skin.getPath( 'editor' ) ],
         multiSelect: false,
       init: ->
         for name, values of all_snippets
           this.add name, "Insert #{name}", "Insert Snippet #{name}" # Command, Label, Tooltip
       onClick: (value) -> editor.getCommand(value).exec(editor)
-    )
 
     # Initialize all the Snippets as CKeditor widgets
     for name, values of all_snippets
