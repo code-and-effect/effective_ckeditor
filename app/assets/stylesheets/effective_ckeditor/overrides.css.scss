@@ -1,14 +1,14 @@
-.cke_editable.cke_editable_inline
-{
-  border: 1px dotted blue;
-  //box-shadow: inset 0px 0px 20px 3px #ddd, inset 0 0 1px #000;
-  cursor: text;
-}
+// .cke_editable.cke_editable_inline
+// {
+//   border: 1px dotted blue;
+//   //box-shadow: inset 0px 0px 20px 3px #ddd, inset 0 0 1px #000;
+//   cursor: text;
+// }
 
-.cke_editable.cke_editable_inline.cke_focus
-{
-  border: 2px dotted blue;
-}
+// .cke_editable.cke_editable_inline.cke_focus
+// {
+//   border: 2px dotted blue;
+// }
 
 // This is the 'Insert Snippet' dropdown
 span.cke_combo__insertsnippet > a > .cke_combo_text {
@@ -28,4 +28,18 @@ span.cke_combo__insertsnippet > a > .cke_combo_text {
 // The 'Styles' dropped down panel
 .cke_combopanel.cke_combopanel__format {
   width: 180px;
+}
+
+div.effective-region {
+  outline: none;
+  border: 1px dotted #4195fc;
+
+  &:focus {
+    outline: none;
+    border: 1px solid #4195fc;
+
+    -webkit-box-shadow: 0px 0px 6px #4195fc;
+       -moz-box-shadow: 0px 0px 6px #4195fc;
+            box-shadow: 0px 0px 6px #4195fc;
+  }
 }
