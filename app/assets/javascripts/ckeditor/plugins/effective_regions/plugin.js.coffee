@@ -15,10 +15,12 @@ SaveAll = {
     content = $('<div>' + instance.getData() + '</div>')
     content.find("div.#{snippet_id}").replaceWith("[#{snippet_id}]") for snippet_id in snippet_ids
 
-    # Process Snippet Only Regions
+    # Slightly different values for the different region types
     if instance.config.toolbar == 'snippets'
       content = content.text()
       content = content.replace(/\]\s+\[/gi, '') if content.indexOf('[snippet_') > -1
+    else if instance.config.toolbar == 'simple'
+      content = content.text()
     else
       content = content.html()
 
@@ -49,7 +51,7 @@ Regions = {
     editor.setActiveEnterMode(CKEDITOR.ENTER_BR, CKEDITOR.ENTER_BR)
 
     # Disable enter button
-    editor.on 'key', (event) -> event.cancel() if event.data.keyCode == 13
+    editor.on 'key', (event) -> event.cancel() if (event.data.keyCode == 13 || event.data.keyCode == 2228237)
 
     # Paste as plain text, but this doesn't work all the way
     editor.config.forcePasteAsPlainText = true
@@ -61,7 +63,7 @@ Regions = {
     editor.setActiveEnterMode(CKEDITOR.ENTER_BR, CKEDITOR.ENTER_BR)
 
     # Disable enter button
-    editor.on 'key', (event) -> event.cancel() if event.data.keyCode == 13
+    editor.on 'key', (event) -> event.cancel() if (event.data.keyCode == 13 || event.data.keyCode == 2228237)
 
     # Paste as plain text, but this doesn't work all the way
     editor.config.forcePasteAsPlainText = true

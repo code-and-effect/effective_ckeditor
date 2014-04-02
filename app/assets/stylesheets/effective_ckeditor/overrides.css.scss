@@ -1,15 +1,3 @@
-// .cke_editable.cke_editable_inline
-// {
-//   border: 1px dotted blue;
-//   //box-shadow: inset 0px 0px 20px 3px #ddd, inset 0 0 1px #000;
-//   cursor: text;
-// }
-
-// .cke_editable.cke_editable_inline.cke_focus
-// {
-//   border: 2px dotted blue;
-// }
-
 // This is the 'Insert Snippet' dropdown
 span.cke_combo__insertsnippet > a > .cke_combo_text {
   width: 80px;
@@ -33,6 +21,8 @@ span.cke_combo__insertsnippet > a > .cke_combo_text {
 div.effective-region {
   outline: none;
   border: 1px dotted #4195fc;
+  min-height: 10px;
+  min-width: 10px;
 
   &:focus {
     outline: none;
