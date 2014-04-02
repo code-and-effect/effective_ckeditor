@@ -1,5 +1,7 @@
 SaveAll = {
   instanceData: (instance) ->
+    instance.resetDirty()
+
     snippets = {} # This is the Data we're going to post to the server
     snippet_ids = [] # This keeps track html classes we need to later replace
 
