@@ -42,6 +42,16 @@ SaveAll = {
       async: false
 }
 
+Exit = {
+  exec: (editor) -> 
+    url = $.cookie('effective_regions_editting')
+
+    if url != undefined && url.length > 0
+      window.location = url
+    else
+      window.history.back()
+}
+
 Regions = {
   initSimpleRegion: (editor) ->
     # Disable all tags
@@ -115,12 +125,16 @@ Snippets = {
 
 CKEDITOR.plugins.add 'effective_regions',
   requires: 'widget',
-  icons: 'save,snippet',
+  icons: 'save,exit',
   hidpi: true,
   init: (editor) ->
     # Saving
     editor.ui.addButton 'Save', {label: 'Save', command: 'effectiveRegionsSaveAll'}
     editor.addCommand('effectiveRegionsSaveAll', SaveAll)
+
+    # Exit Button
+    editor.ui.addButton 'Exit', {label: 'Exit', command: 'effectiveRegionsExit'}
+    editor.addCommand('effectiveRegionsExit', Exit)
 
     # Regions
     Regions.initSimpleRegion(editor) if editor.config.toolbar == 'simple'

@@ -11,14 +11,15 @@ CKEDITOR.editorConfig = (config) ->
     { name: 'clipboard', items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord'] },
     { name: 'find', items: ['Find', 'Replace', '-', 'SelectAll'] },
     { name: 'links', items: ['Link', 'Unlink', 'Anchor'] },
-    { name: 'insert', items: ['Image', 'tliyoutube', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak'] },
+    { name: 'insert', items: ['Image', 'tliyoutube', 'Table', 'HorizontalRule', 'PageBreak'] },
     { name: 'html', items: ['Sourcedialog', '-', 'ShowBlocks'] },
+    ['Exit']
     '/',
     { name: 'definedstyleszzz', items: ['Styles', 'Format'] },
     { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'] },
     { name: 'colors', items: ['TextColor', 'BGColor'] },
     { name: 'lists', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv'] },
-    { name: 'snippets', items: ['InsertSnippet'] }  # Snippets should be the last Element
+    { name: 'snippets', items: ['InsertSnippet'] }
   ]
 
   config.toolbar_simple = [
@@ -26,12 +27,14 @@ CKEDITOR.editorConfig = (config) ->
     ['Undo', 'Redo'],
     ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord'],
     ['Find', 'Replace', '-', 'SelectAll'],
+    ['Exit']
   ]
 
   config.toolbar_snippets = [
     ['Save', '-', 'NewPage'], 
     ['Undo', 'Redo'],
     ['Sourcedialog', '-', 'ShowBlocks'],
-    { name: 'snippets', items: ['InsertSnippet'] }   # Snippets should be the last Element
+    { name: 'snippets', items: ['InsertSnippet'] },
+    ['Exit']
   ]
 

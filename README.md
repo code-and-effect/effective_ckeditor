@@ -4,7 +4,7 @@ Wraps the CKEditor Javscript library (http://ckeditor.com/) for use with the eff
 
 Not intended for use as a standalone gem.
 
-Rails 3.2.x and Rails 4.0.0 compatible.
+Rails 3.2.x and Rails 4 compatible.
 
 ## Usage
 

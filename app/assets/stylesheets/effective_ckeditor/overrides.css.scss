@@ -1,6 +1,6 @@
 // This is the 'Insert Snippet' dropdown
 span.cke_combo__insertsnippet > a > .cke_combo_text {
-  width: 80px;
+  width: 111px;
 }
 
 // The 'Insert Snippet' dropped down panel
@@ -16,6 +16,10 @@ span.cke_combo__insertsnippet > a > .cke_combo_text {
 // The 'Styles' dropped down panel
 .cke_combopanel.cke_combopanel__format {
   width: 180px;
+}
+
+span.cke_toolbar > span.cke_toolgroup > a.cke_button__exit > span.cke_button__exit_label {
+  display: inline;
 }
 
 div.effective-region {
