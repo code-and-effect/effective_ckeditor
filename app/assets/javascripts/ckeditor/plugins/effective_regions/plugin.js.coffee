@@ -15,7 +15,7 @@ SaveAll = {
 
     # Replace the entire widget <div>...</div> with [snippet_0]
     content = $('<div>' + instance.getData() + '</div>')
-    content.find("div.#{snippet_id}").replaceWith("[#{snippet_id}]") for snippet_id in snippet_ids
+    content.find(".#{snippet_id}").replaceWith("[#{snippet_id}]") for snippet_id in snippet_ids
 
     # Slightly different values for the different region types
     if instance.config.toolbar == 'snippets'
@@ -53,6 +53,8 @@ Exit = {
 }
 
 Regions = {
+  initFullRegion: (editor) -> true
+
   initSimpleRegion: (editor) ->
     # Disable all tags
     filter = new CKEDITOR.filter('no_tags_allowed')
@@ -99,11 +101,13 @@ Snippets = {
     snippet = {}
 
     snippet['configured'] = false
-    snippet['template'] = "<div class='#{name}_snippet' data-effective-snippet='{}'></div>"
     snippet['dialog_url'] = values.dialog_url
     snippet['dialog'] = name if values.dialog_url
-    snippet['requiredContent'] = "div(#{name}_snippet)"
-    snippet['upcast'] = (element) -> element.name == 'div' && element.hasClass(name + '_snippet')
+    snippet['inline'] = values.inline
+
+    snippet['template'] = "<#{values.wrapper_tag} class='#{name}_snippet' data-effective-snippet='{}'></#{values.wrapper_tag}>"
+    snippet['requiredContent'] = "#{values.wrapper_tag}(#{name}_snippet)"
+    snippet['upcast'] = (element) -> element.name == "#{values.wrapper_tag}" && element.hasClass(name + '_snippet')
 
     snippet['loadTemplate'] = (widget) ->
       $.ajax
@@ -111,10 +115,10 @@ Snippets = {
         type: 'GET'
         data: {effective_regions: {name: widget.name, data: widget.data}}
         async: false
-        complete: (data) -> $(widget.wrapper.$).find('div.cke_widget_element').html(data.responseText)
+        complete: (data) -> $(widget.wrapper.$).find('.cke_widget_element').html(data.responseText)
 
     snippet['init'] = ->
-      for k, v of $(this.wrapper.$).find('div.cke_widget_element').data('effective-snippet')
+      for k, v of $(this.wrapper.$).find('.cke_widget_element').data('effective-snippet')
         this.data[k] = v
 
       this.on 'dialog', (evt) -> @configured = true
@@ -139,6 +143,7 @@ CKEDITOR.plugins.add 'effective_regions',
     # Regions
     Regions.initSimpleRegion(editor) if editor.config.toolbar == 'simple'
     Regions.initSnippetsRegion(editor) if editor.config.toolbar == 'snippets'
+    Regions.initFullRegion(editor) if editor.config.toolbar == 'full'
 
     # Snippets
     all_snippets = Snippets.all()
@@ -152,7 +157,7 @@ CKEDITOR.plugins.add 'effective_regions',
         multiSelect: false,
       init: ->
         for name, values of all_snippets
-          this.add name, "Insert #{name}", "Insert Snippet #{name}" # Command, Label, Tooltip
+          this.add name, "#{values.label}", "#{values.description}" # Command, Label, Tooltip
       onClick: (value) -> editor.getCommand(value).exec(editor)
 
     # Initialize all the Snippets as CKeditor widgets
