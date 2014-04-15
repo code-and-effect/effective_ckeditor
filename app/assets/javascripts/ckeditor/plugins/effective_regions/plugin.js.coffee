@@ -163,4 +163,3 @@ CKEDITOR.plugins.add 'effective_regions',
       CKEDITOR.dialog.add(name, snippet.dialog_url) if snippet.dialog_url
 
 
-

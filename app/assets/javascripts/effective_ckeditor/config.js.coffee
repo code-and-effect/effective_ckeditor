@@ -1,7 +1,7 @@
 CKEDITOR.editorConfig = (config) ->
   config.startupShowBorders = true
 
-  config.extraPlugins = 'effective_regions'
+  config.extraPlugins = 'effective_regions,effective_assets'
 
   config.format_tags = 'p;h1;h2;h3;h4;pre'
 
@@ -11,7 +11,7 @@ CKEDITOR.editorConfig = (config) ->
     { name: 'clipboard', items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord'] },
     { name: 'find', items: ['Find', 'Replace', '-', 'SelectAll'] },
     { name: 'links', items: ['Link', 'Unlink', 'Anchor'] },
-    { name: 'insert', items: ['Image', 'tliyoutube', 'Table', 'HorizontalRule', 'PageBreak'] },
+    { name: 'insert', items: ['EffectiveAssets', 'Image', 'tliyoutube', 'Table', 'HorizontalRule', 'PageBreak'] },
     { name: 'html', items: ['Sourcedialog', '-', 'ShowBlocks'] },
     ['Exit']
     '/',
