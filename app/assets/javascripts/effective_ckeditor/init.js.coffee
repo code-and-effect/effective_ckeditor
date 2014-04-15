@@ -33,6 +33,7 @@ init = ->
 initEditor = (editor_div) ->
   CKEDITOR.inline(editor_div.id,
     toolbar: $(editor_div).data('effective-ckeditor')
+    onlySnippets: $(editor_div).data('only-snippets')
     customConfig: '/assets/effective_ckeditor/config.js'
     disableNativeTableHandles: true
     sharedSpaces:

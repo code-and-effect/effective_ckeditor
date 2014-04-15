@@ -77,7 +77,7 @@ Regions = {
     editor.setActiveEnterMode(CKEDITOR.ENTER_BR, CKEDITOR.ENTER_BR)
 
     # Disable enter button
-    editor.on 'key', (event) -> event.cancel() if (event.data.keyCode == 13 || event.data.keyCode == 2228237)
+    editor.on 'key', (event) -> event.cancel() unless (event.data.keyCode == 8)  # 8 is backspace
 
     # Paste as plain text, but this doesn't work all the way
     editor.config.forcePasteAsPlainText = true
@@ -127,6 +127,23 @@ Snippets = {
     snippet
 }
 
+BuildInsertSnippetDropdown = (editor, all_snippets) ->
+  editor.ui.addRichCombo 'InsertSnippet',
+    label: 'Insert Snippet',
+    title: 'Insert Snippet',
+    panel: 
+      css: [ CKEDITOR.skin.getPath( 'editor' ) ],
+      multiSelect: false,
+    init: -> this.add(name, "#{values.label}", "#{values.description}") for name, values of all_snippets
+    onClick: (value) -> editor.getCommand(value).exec(editor)
+    onOpen: (evt) ->
+      this.showAll()
+      onlySnippets = this._.panel._.editor.config.onlySnippets
+
+      if onlySnippets.length > 0
+        for name, _ of this._.items
+          this.hideItem(name) if onlySnippets.indexOf(name) == -1  # Hide it, if it's not in onlySnippets array
+
 CKEDITOR.plugins.add 'effective_regions',
   requires: 'widget',
   icons: 'save,exit',
@@ -148,17 +165,8 @@ CKEDITOR.plugins.add 'effective_regions',
     # Snippets
     all_snippets = Snippets.all()
 
-    # Build the Insert Snippets Dropdown
-    editor.ui.addRichCombo 'InsertSnippet',
-      label: 'Insert Snippet',
-      title: 'Insert Snippet',
-      panel: 
-        css: [ CKEDITOR.skin.getPath( 'editor' ) ],
-        multiSelect: false,
-      init: ->
-        for name, values of all_snippets
-          this.add name, "#{values.label}", "#{values.description}" # Command, Label, Tooltip
-      onClick: (value) -> editor.getCommand(value).exec(editor)
+    # Insert Snippets Dropdown
+    BuildInsertSnippetDropdown(editor, all_snippets)
 
     # Initialize all the Snippets as CKeditor widgets
     for name, values of all_snippets
