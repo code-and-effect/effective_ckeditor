@@ -1,18 +1,10 @@
 .effective-ckeditor-editting {
   padding-top: 80px; // Whatever the height of our top bar will be
-  padding-bottom: 40px;
 }
 
 #effective-ckeditor-top { 
   position: fixed; 
   top: 0; 
-  width: 100%; 
-  z-index: 9000;
-}
-
-#effective-ckeditor-bottom { 
-  position: fixed; 
-  bottom: 0; 
   width: 100%; 
   z-index: 9000;
 }

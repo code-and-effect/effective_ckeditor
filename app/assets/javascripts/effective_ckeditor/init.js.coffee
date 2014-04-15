@@ -16,7 +16,6 @@ init = ->
   if ckeditors.length
     $('body')
       .prepend("<div id='effective-ckeditor-top'></div>")
-      .append("<div id='effective-ckeditor-bottom'></div>")
       .addClass('effective-ckeditor-editting')
 
     $(window).on 'beforeunload', (event) -> promptToSaveIfDirty(event)
@@ -38,7 +37,6 @@ initEditor = (editor_div) ->
     disableNativeTableHandles: true
     sharedSpaces:
       top: 'effective-ckeditor-top'
-      bottom: 'effective-ckeditor-bottom'
   )
 
 promptToSaveIfDirty = (event) ->
