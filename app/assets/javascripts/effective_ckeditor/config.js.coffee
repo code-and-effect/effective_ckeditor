@@ -1,6 +1,5 @@
 CKEDITOR.editorConfig = (config) ->
   config.startupShowBorders = true
-  config.startupOutlineBlocks = true
 
   config.extraPlugins = 'effective_regions,effective_assets'
 

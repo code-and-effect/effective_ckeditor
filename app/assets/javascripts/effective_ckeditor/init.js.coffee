@@ -1,10 +1,10 @@
 CKEDITOR.disableAutoInline = true
 
 # Disable drag & dropping into regions (fixes issues with simple regions)
-$(document).on 'drop', 'div.effective-region', (event) -> event.preventDefault()
+$(document).on 'drop', '.effective-region', (event) -> event.preventDefault()
 
 # Don't propogate click events up
-$(document).on 'click', 'div.effective-region', (event) -> event.stopPropagation()
+$(document).on 'click', '.effective-region', (event) -> event.stopPropagation()
 
 $ -> init()
 
@@ -35,6 +35,7 @@ initEditor = (editor_div) ->
     toolbar: $(editor_div).data('effective-ckeditor')
     onlySnippets: $(editor_div).data('only-snippets')
     customConfig: '/assets/effective_ckeditor/config.js'
+    startupOutlineBlocks: $(editor_div).data('effective-ckeditor') == 'full'
     disableNativeTableHandles: true
     sharedSpaces:
       top: 'effective-ckeditor-top'
