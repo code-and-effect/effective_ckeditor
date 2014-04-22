@@ -4,7 +4,9 @@ CKEDITOR.disableAutoInline = true
 $(document).on 'drop', '.effective-region', (event) -> event.preventDefault()
 
 # Don't propogate click events up
-$(document).on 'click', '.effective-region', (event) -> event.stopPropagation()
+$(document).on 'click', '.effective-region', (event) -> 
+  event.stopPropagation()
+  event.preventDefault()
 
 $ -> init()
 
