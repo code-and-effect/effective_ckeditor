@@ -62,7 +62,6 @@ Regions = {
 
     # Disable wrapping content with <p></p>.  This could break plugins.
     editor.config.autoParagraph = false
-    editor.setActiveEnterMode(CKEDITOR.ENTER_BR, CKEDITOR.ENTER_BR)
 
     # Disable enter button
     editor.on 'key', (event) -> event.cancel() if (event.data.keyCode == 13 || event.data.keyCode == 2228237)
@@ -74,7 +73,6 @@ Regions = {
   initSnippetsRegion: (editor) ->
     # Disable wrapping content with <p></p>.  This could break plugins.
     editor.config.autoParagraph = false
-    editor.setActiveEnterMode(CKEDITOR.ENTER_BR, CKEDITOR.ENTER_BR)
 
     # Disable enter button
     editor.on 'key', (event) -> event.cancel() unless (event.data.keyCode == 8)  # 8 is backspace
@@ -123,6 +121,27 @@ Snippets = {
 
       this.on 'dialog', (evt) -> @configured = true
       this.on 'data', (evt) -> @loadTemplate(evt.sender) if @configured
+      this.on 'ready', (evt) ->
+        return true if @configured != true
+        editor = evt.sender.editor
+        children = editor.getSelection().getCommonAncestor().getChildren()
+
+        node0 = children.getItem(0)
+        node1 = children.getItem(1)
+        node2 = children.getItem(2)
+
+        if (node0.getName() == 'ol' || node0.getName() == 'ul') && node1.hasClass('cke_widget_wrapper')
+          if (liNode = node0.getChild(0)).getName() == 'li'
+            newNode = liNode.clone()
+            newNode.append(this.wrapper)
+            node0.append(newNode)
+            node2.remove() if node2.getName() == 'br'
+        else if node0.hasClass('cke_widget_wrapper') && (node2.getName() == 'ol' || node2.getName() == 'ul')
+          if (liNode = node2.getChild(0)).getName() == 'li'
+            newNode = liNode.clone()
+            newNode.append(this.wrapper)
+            node2.append(newNode, true) # prepend it
+            node1.remove() if node1.getName() == 'br'
 
     snippet
 }
@@ -138,11 +157,11 @@ BuildInsertSnippetDropdown = (editor, all_snippets) ->
     onClick: (value) -> editor.getCommand(value).exec(editor)
     onOpen: (evt) ->
       this.showAll()
-      onlySnippets = this._.panel._.editor.config.onlySnippets
+      allowedSnippets = this._.panel._.editor.config.allowedSnippets
 
-      if onlySnippets.length > 0
+      if allowedSnippets.length > 0
         for name, _ of this._.items
-          this.hideItem(name) if onlySnippets.indexOf(name) == -1  # Hide it, if it's not in onlySnippets array
+          this.hideItem(name) if allowedSnippets.indexOf(name) == -1  # Hide it, if it's not in allowedSnippets array
 
 CKEDITOR.plugins.add 'effective_regions',
   requires: 'widget',

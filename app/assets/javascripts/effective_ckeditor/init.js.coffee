@@ -14,9 +14,7 @@ init = ->
   ckeditors = $('[data-effective-ckeditor]')
 
   if ckeditors.length
-    $('body')
-      .prepend("<div id='effective-ckeditor-top'></div>")
-      .addClass('effective-ckeditor-editting')
+    $('body').prepend("<div id='effective-ckeditor-top'></div>").addClass('effective-ckeditor-editting')
 
     $(window).on 'beforeunload', (event) -> promptToSaveIfDirty(event)
     $(window).on 'unload', (event) -> $.cookie('effective_regions_editting', '', {path: '/', expires: -1})
@@ -31,11 +29,25 @@ init = ->
         editor_div.on 'click', -> try initEditor(this)
 
 initEditor = (editor_div) ->
+  region = $(editor_div).data('effective-ckeditor')
+
+  switch region
+    when 'full'
+      enterMode = CKEDITOR.ENTER_P
+      startupOutlineBlocks = true
+    when 'snippets'
+      enterMode = CKEDITOR.ENTER_BR
+      startupOutlineBlocks = false
+    when 'simple'
+      enterMode = CKEDITOR.ENTER_BR
+      startupOutlineBlocks = false
+
   CKEDITOR.inline(editor_div.id,
-    toolbar: $(editor_div).data('effective-ckeditor')
-    onlySnippets: $(editor_div).data('only-snippets')
+    toolbar: region
+    allowedSnippets: $(editor_div).data('allowed-snippets')
     customConfig: '/assets/effective_ckeditor/config.js'
-    startupOutlineBlocks: $(editor_div).data('effective-ckeditor') == 'full'
+    enterMode: enterMode
+    startupOutlineBlocks: startupOutlineBlocks
     disableNativeTableHandles: true
     sharedSpaces:
       top: 'effective-ckeditor-top'
