@@ -18,7 +18,7 @@ SaveAll = {
     content.find(".#{snippet_id}").replaceWith("[#{snippet_id}]") for snippet_id in snippet_ids
 
     # Slightly different values for the different region types
-    if instance.config.toolbar == 'snippets'
+    if instance.config.effectiveRegionType == 'snippets'
       content = content.text()
       content = content.replace(/\]\s+\[/gi, '') if content.indexOf('[snippet_') > -1
     else if instance.config.toolbar == 'simple'
@@ -80,6 +80,17 @@ Regions = {
     # Paste as plain text, but this doesn't work all the way
     editor.config.forcePasteAsPlainText = true
     editor.on 'afterPaste', (evt) -> editor.setData(editor.getData().replace(/<[^<|>]+?>/gi,'')) 
+
+  initListSnippetsRegion: (editor) ->
+    # Disable wrapping content with <p></p>.  This could break plugins.
+    editor.config.autoParagraph = false
+
+    # Disable enter button
+    editor.on 'key', (event) -> event.cancel() unless (event.data.keyCode == 8)  # 8 is backspace
+
+    # Paste as plain text, but this doesn't work all the way
+    editor.config.forcePasteAsPlainText = true
+    editor.on 'afterPaste', (evt) -> editor.setData(editor.getData().replace(/<[^<|>]+?>/gi,'')) 
 }
 
 Snippets = {
@@ -102,6 +113,7 @@ Snippets = {
     snippet['dialog_url'] = values.dialog_url
     snippet['dialog'] = name if values.dialog_url
     snippet['inline'] = values.inline
+    snippet['draggable'] = editor.config.effectiveRegionType != 'list_snippets'
 
     snippet['template'] = "<#{values.wrapper_tag} class='#{name}_snippet' data-effective-snippet='{}'></#{values.wrapper_tag}>"
     snippet['requiredContent'] = "#{values.wrapper_tag}(#{name}_snippet)"
@@ -122,26 +134,33 @@ Snippets = {
       this.on 'dialog', (evt) -> @configured = true
       this.on 'data', (evt) -> @loadTemplate(evt.sender) if @configured
       this.on 'ready', (evt) ->
-        return true if @configured != true
+        return true if @configured != true || evt.sender.editor.config.effectiveRegionType != 'list_snippets'
         editor = evt.sender.editor
-        children = editor.getSelection().getCommonAncestor().getChildren()
 
-        node0 = children.getItem(0)
-        node1 = children.getItem(1)
-        node2 = children.getItem(2)
+        # This makes sure an inserted snippet within a 'list_snippets' region is inserted under <ol><li>
+        try
+          root = editor.getSelection().getCommonAncestor()
+          root = root.getParent() while (root.hasClass('effective-region') == false && root.getName() != 'body')
 
-        if (node0.getName() == 'ol' || node0.getName() == 'ul') && node1.hasClass('cke_widget_wrapper')
-          if (liNode = node0.getChild(0)).getName() == 'li'
-            newNode = liNode.clone()
-            newNode.append(this.wrapper)
-            node0.append(newNode)
-            node2.remove() if node2.getName() == 'br'
-        else if node0.hasClass('cke_widget_wrapper') && (node2.getName() == 'ol' || node2.getName() == 'ul')
-          if (liNode = node2.getChild(0)).getName() == 'li'
-            newNode = liNode.clone()
-            newNode.append(this.wrapper)
-            node2.append(newNode, true) # prepend it
-            node1.remove() if node1.getName() == 'br'
+          children = root.getChildren()
+
+          node0 = children.getItem(0)
+          node1 = children.getItem(1)
+          node2 = children.getItem(2)
+
+          # Find the first OL/UL, find its LI, clone it, then insert the widget into that LI
+          if (node0.getName() == 'ol' || node0.getName() == 'ul') && (node1 == null || node1.hasClass('cke_widget_wrapper'))
+            if (liNode = node0.getChild(0)).getName() == 'li'
+              newNode = liNode.clone()
+              newNode.append(this.wrapper)
+              node0.append(newNode)
+              node2.remove() if (node2 != null && node2.getName() == 'br')
+          else if node0.hasClass('cke_widget_wrapper') && node2 != null && (node2.getName() == 'ol' || node2.getName() == 'ul')
+            if (liNode = node2.getChild(0)).getName() == 'li'
+              newNode = liNode.clone()
+              newNode.append(this.wrapper)
+              node2.append(newNode, true) # prepend it
+              node1.remove() if (node1 != null && node1.getName() == 'br')
 
     snippet
 }
@@ -177,9 +196,10 @@ CKEDITOR.plugins.add 'effective_regions',
     editor.addCommand('effectiveRegionsExit', Exit)
 
     # Regions
-    Regions.initSimpleRegion(editor) if editor.config.toolbar == 'simple'
-    Regions.initSnippetsRegion(editor) if editor.config.toolbar == 'snippets'
-    Regions.initFullRegion(editor) if editor.config.toolbar == 'full'
+    Regions.initSimpleRegion(editor) if editor.config.effectiveRegionType == 'simple'
+    Regions.initSnippetsRegion(editor) if editor.config.effectiveRegionType == 'snippets'
+    Regions.initListSnippetsRegion(editor) if editor.config.effectiveRegionType == 'list_snippets'
+    Regions.initFullRegion(editor) if editor.config.effectiveRegionType == 'full'
 
     # Snippets
     all_snippets = Snippets.all()

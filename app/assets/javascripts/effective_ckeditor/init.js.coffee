@@ -35,16 +35,24 @@ initEditor = (editor_div) ->
     when 'full'
       enterMode = CKEDITOR.ENTER_P
       startupOutlineBlocks = true
+      toolbar = 'full'
     when 'snippets'
       enterMode = CKEDITOR.ENTER_BR
       startupOutlineBlocks = false
+      toolbar = 'snippets'
+    when 'list_snippets'
+      enterMode = CKEDITOR.ENTER_BR
+      startupOutlineBlocks = false
+      toolbar = 'snippets'
     when 'simple'
       enterMode = CKEDITOR.ENTER_BR
       startupOutlineBlocks = false
+      toolbar = 'simple'
 
   CKEDITOR.inline(editor_div.id,
-    toolbar: region
+    toolbar: toolbar
     allowedSnippets: $(editor_div).data('allowed-snippets')
+    effectiveRegionType: region
     customConfig: '/assets/effective_ckeditor/config.js'
     enterMode: enterMode
     startupOutlineBlocks: startupOutlineBlocks
