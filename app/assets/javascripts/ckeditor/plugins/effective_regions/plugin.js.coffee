@@ -20,7 +20,7 @@ SaveAll = {
     # Slightly different values for the different region types
     if instance.config.effectiveRegionType == 'snippets'
       content = content.text()
-      content = content.replace(/\]\s+\[/gi, '') if content.indexOf('[snippet_') > -1
+      content = content.replace(/\s+/gi, '') if content.indexOf('[snippet_') > -1
     else if instance.config.toolbar == 'simple'
       content = content.text()
     else
@@ -115,7 +115,7 @@ Snippets = {
     snippet['inline'] = values.inline
     snippet['editables'] = values.editables if values.editables
     snippet['draggable'] = editor.config.effectiveRegionType != 'list_snippets'
-    snippet['template'] = "<div></div>"
+    snippet['template'] = "<#{values.tag}></#{values.tag}>"
     snippet['upcast'] = (element) -> element.attributes['data-effective-snippet'] == name
     snippet['loadTemplate'] = (widget) ->
       $.ajax
@@ -123,16 +123,18 @@ Snippets = {
         type: 'GET'
         data: {effective_regions: {name: widget.name, data: widget.data}}
         async: false
-        complete: (data) -> widget.element.setHtml($(data.responseText).html())
+        complete: (data) -> 
+          element = $(data.responseText)
+          classes = element.attr('class').split(/\s+/)
+          widget.element.setHtml(element.html())
+          widget.element.addClass(c) for c in classes
 
     snippet['init'] = ->
       this.data[k] = v for k, v of $(this.element.$).data('snippet-data')
 
       this.on 'dialog', (evt) -> @effectiveSnippetConfigured = true
       this.on 'data', (evt) -> @loadTemplate(evt.sender) if @effectiveSnippetConfigured
-      this.on 'ready', (evt) -> true
 
-    #console.log snippet
     snippet
 }
 
