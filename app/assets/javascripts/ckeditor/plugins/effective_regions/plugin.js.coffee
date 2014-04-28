@@ -115,7 +115,7 @@ Snippets = {
     snippet['inline'] = values.inline
     snippet['editables'] = values.editables if values.editables
     snippet['draggable'] = editor.config.effectiveRegionType != 'list_snippets'
-    snippet['template'] = values.template
+    snippet['template'] = "<div></div>"
     snippet['upcast'] = (element) -> element.attributes['data-effective-snippet'] == name
     snippet['loadTemplate'] = (widget) ->
       $.ajax
@@ -126,12 +126,67 @@ Snippets = {
         complete: (data) -> widget.element.setHtml($(data.responseText).html())
 
     snippet['init'] = ->
-      for k, v of $(this.wrapper.$).find('.cke_widget_element').data('snippet-data')
-        this.data[k] = v
+      this.data[k] = v for k, v of $(this.element.$).data('snippet-data')
 
       this.on 'dialog', (evt) -> @effectiveSnippetConfigured = true
       this.on 'data', (evt) -> @loadTemplate(evt.sender) if @effectiveSnippetConfigured
       this.on 'ready', (evt) -> true
+
+    #console.log snippet
+    snippet
+}
+
+BuildInsertSnippetDropdown = (editor, all_snippets) ->
+  editor.ui.addRichCombo 'InsertSnippet',
+    label: 'Insert Snippet',
+    title: 'Insert Snippet',
+    panel: 
+      css: [ CKEDITOR.skin.getPath( 'editor' ) ],
+      multiSelect: false,
+    init: -> this.add(name, "#{values.label}", "#{values.description}") for name, values of all_snippets
+    onClick: (value) -> editor.getCommand(value).exec(editor)
+    onOpen: (evt) ->
+      this.showAll()
+      allowedSnippets = this._.panel._.editor.config.allowedSnippets
+
+      if allowedSnippets.length > 0
+        for name, _ of this._.items
+          this.hideItem(name) if allowedSnippets.indexOf(name) == -1  # Hide it, if it's not in allowedSnippets array
+
+CKEDITOR.plugins.add 'effective_regions',
+  requires: 'widget',
+  icons: 'save,exit',
+  hidpi: true,
+  init: (editor) ->
+    # Saving
+    editor.ui.addButton 'Save', {label: 'Save', command: 'effectiveRegionsSaveAll'}
+    editor.addCommand('effectiveRegionsSaveAll', SaveAll)
+
+    # Exit Button
+    editor.ui.addButton 'Exit', {label: 'Exit', command: 'effectiveRegionsExit'}
+    editor.addCommand('effectiveRegionsExit', Exit)
+
+    # Regions
+    Regions.initSimpleRegion(editor) if editor.config.effectiveRegionType == 'simple'
+    Regions.initSnippetsRegion(editor) if editor.config.effectiveRegionType == 'snippets'
+    Regions.initListSnippetsRegion(editor) if editor.config.effectiveRegionType == 'list_snippets'
+    Regions.initFullRegion(editor) if editor.config.effectiveRegionType == 'full'
+
+    # Snippets
+    all_snippets = Snippets.all()
+
+    # Insert Snippets Dropdown
+    BuildInsertSnippetDropdown(editor, all_snippets)
+
+    # Initialize all the Snippets as CKeditor widgets
+    for name, values of all_snippets
+
+      snippet = Snippets.build(editor, name, values)
+
+      editor.widgets.add(name, snippet)
+      CKEDITOR.dialog.add(name, snippet.dialog_url) if snippet.dialog_url
+
+
 
 
     #snippet['requiredContent'] = "#{values.wrapper_tag}(#{name}_snippet)"
@@ -193,57 +248,3 @@ Snippets = {
     #           newNode.append(this.wrapper)
     #           node2.append(newNode, true) # prepend it
     #           node1.remove() if (node1 != null && node1.getName() == 'br')
-
-    snippet
-}
-
-BuildInsertSnippetDropdown = (editor, all_snippets) ->
-  editor.ui.addRichCombo 'InsertSnippet',
-    label: 'Insert Snippet',
-    title: 'Insert Snippet',
-    panel: 
-      css: [ CKEDITOR.skin.getPath( 'editor' ) ],
-      multiSelect: false,
-    init: -> this.add(name, "#{values.label}", "#{values.description}") for name, values of all_snippets
-    onClick: (value) -> editor.getCommand(value).exec(editor)
-    onOpen: (evt) ->
-      this.showAll()
-      allowedSnippets = this._.panel._.editor.config.allowedSnippets
-
-      if allowedSnippets.length > 0
-        for name, _ of this._.items
-          this.hideItem(name) if allowedSnippets.indexOf(name) == -1  # Hide it, if it's not in allowedSnippets array
-
-CKEDITOR.plugins.add 'effective_regions',
-  requires: 'widget',
-  icons: 'save,exit',
-  hidpi: true,
-  init: (editor) ->
-    # Saving
-    editor.ui.addButton 'Save', {label: 'Save', command: 'effectiveRegionsSaveAll'}
-    editor.addCommand('effectiveRegionsSaveAll', SaveAll)
-
-    # Exit Button
-    editor.ui.addButton 'Exit', {label: 'Exit', command: 'effectiveRegionsExit'}
-    editor.addCommand('effectiveRegionsExit', Exit)
-
-    # Regions
-    Regions.initSimpleRegion(editor) if editor.config.effectiveRegionType == 'simple'
-    Regions.initSnippetsRegion(editor) if editor.config.effectiveRegionType == 'snippets'
-    Regions.initListSnippetsRegion(editor) if editor.config.effectiveRegionType == 'list_snippets'
-    Regions.initFullRegion(editor) if editor.config.effectiveRegionType == 'full'
-
-    # Snippets
-    all_snippets = Snippets.all()
-
-    # Insert Snippets Dropdown
-    BuildInsertSnippetDropdown(editor, all_snippets)
-
-    # Initialize all the Snippets as CKeditor widgets
-    for name, values of all_snippets
-      snippet = Snippets.build(editor, name, values)
-
-      editor.widgets.add(name, snippet)
-      CKEDITOR.dialog.add(name, snippet.dialog_url) if snippet.dialog_url
-
-
