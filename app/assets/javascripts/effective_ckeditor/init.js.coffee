@@ -36,18 +36,22 @@ initEditor = (editor_div) ->
   switch region
     when 'full'
       enterMode = CKEDITOR.ENTER_P
+      shiftEnterMode = CKEDITOR.ENTER_BR
       startupOutlineBlocks = true
       toolbar = 'full'
     when 'snippets'
       enterMode = CKEDITOR.ENTER_BR
+      shiftEnterMode = CKEDITOR.ENTER_BR
       startupOutlineBlocks = false
       toolbar = 'snippets'
     when 'list_snippets'
       enterMode = CKEDITOR.ENTER_BR
+      shiftEnterMode = CKEDITOR.ENTER_BR
       startupOutlineBlocks = false
       toolbar = 'snippets'
     when 'simple'
       enterMode = CKEDITOR.ENTER_BR
+      shiftEnterMode = CKEDITOR.ENTER_BR
       startupOutlineBlocks = false
       toolbar = 'simple'
 
@@ -57,6 +61,7 @@ initEditor = (editor_div) ->
     effectiveRegionType: region
     customConfig: '/assets/effective_ckeditor/config.js'
     enterMode: enterMode
+    shiftEnterMode: shiftEnterMode
     startupOutlineBlocks: startupOutlineBlocks
     disableNativeTableHandles: true
     sharedSpaces:

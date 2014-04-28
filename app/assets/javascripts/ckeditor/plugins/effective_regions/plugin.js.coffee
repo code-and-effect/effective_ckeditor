@@ -6,14 +6,14 @@ SaveAll = {
     snippet_ids = [] # This keeps track html classes we need to later replace
 
     for id, widget of instance.widgets.instances
-      if widget.element.data('effective-snippet')
+      if widget.effectiveSnippetConfigured != undefined # This is an effectiveSnippet type widget
         snippet_id = "snippet_#{id}"
         snippets[snippet_id] = widget.data
         snippets[snippet_id]['class_name'] = widget.name
         widget.element.addClass(snippet_id)
         snippet_ids.push(snippet_id)
 
-    # Replace the entire widget <div>...</div> with [snippet_0]
+    # # # Replace the entire widget <div>...</div> with [snippet_0]
     content = $('<div>' + instance.getData() + '</div>')
     content.find(".#{snippet_id}").replaceWith("[#{snippet_id}]") for snippet_id in snippet_ids
 
@@ -109,58 +109,90 @@ Snippets = {
   build: (editor, name, values) ->
     snippet = {}
 
-    snippet['configured'] = false
+    snippet['effectiveSnippetConfigured'] = false
     snippet['dialog_url'] = values.dialog_url
     snippet['dialog'] = name if values.dialog_url
     snippet['inline'] = values.inline
+    snippet['editables'] = values.editables if values.editables
     snippet['draggable'] = editor.config.effectiveRegionType != 'list_snippets'
-
-    snippet['template'] = "<#{values.wrapper_tag} class='#{name}_snippet' data-effective-snippet='{}'></#{values.wrapper_tag}>"
-    snippet['requiredContent'] = "#{values.wrapper_tag}(#{name}_snippet)"
-    snippet['upcast'] = (element) -> element.name == "#{values.wrapper_tag}" && element.hasClass(name + '_snippet')
-
+    snippet['template'] = values.template
+    snippet['upcast'] = (element) -> element.attributes['data-effective-snippet'] == name
     snippet['loadTemplate'] = (widget) ->
       $.ajax
         url: '/effective_regions/snippet'
         type: 'GET'
         data: {effective_regions: {name: widget.name, data: widget.data}}
         async: false
-        complete: (data) -> $(widget.wrapper.$).find('.cke_widget_element').html(data.responseText)
+        complete: (data) -> widget.element.setHtml($(data.responseText).html())
 
     snippet['init'] = ->
-      for k, v of $(this.wrapper.$).find('.cke_widget_element').data('effective-snippet')
+      for k, v of $(this.wrapper.$).find('.cke_widget_element').data('snippet-data')
         this.data[k] = v
 
-      this.on 'dialog', (evt) -> @configured = true
-      this.on 'data', (evt) -> @loadTemplate(evt.sender) if @configured
-      this.on 'ready', (evt) ->
-        return true if @configured != true || evt.sender.editor.config.effectiveRegionType != 'list_snippets'
-        editor = evt.sender.editor
+      this.on 'dialog', (evt) -> @effectiveSnippetConfigured = true
+      this.on 'data', (evt) -> @loadTemplate(evt.sender) if @effectiveSnippetConfigured
+      this.on 'ready', (evt) -> true
 
-        # This makes sure an inserted snippet within a 'list_snippets' region is inserted under <ol><li>
-        try
-          root = editor.getSelection().getCommonAncestor()
-          root = root.getParent() while (root.hasClass('effective-region') == false && root.getName() != 'body')
 
-          children = root.getChildren()
+    #snippet['requiredContent'] = "#{values.wrapper_tag}(#{name}_snippet)"
+    # snippet['init'] = ->
+    #   console.log "INIT"
+    #   for k, v of $(this.wrapper.$).find('.cke_widget_element').data('effective-snippet')
+    #     this.data[k] = v
 
-          node0 = children.getItem(0)
-          node1 = children.getItem(1)
-          node2 = children.getItem(2)
+    #   for editables_name, editables_values of values.editables
+    #     console.log editables_values.selector
+    #     console.log this.element.find(editables_values.selector)
+    #     console.log this.element.find(editables_values.selector).getItem(0).getHtml()
+    #     this.data[editables_name] = this.element.find(editables_values.selector).getItem(0).getHtml()
 
-          # Find the first OL/UL, find its LI, clone it, then insert the widget into that LI
-          if (node0.getName() == 'ol' || node0.getName() == 'ul') && (node1 == null || node1.hasClass('cke_widget_wrapper'))
-            if (liNode = node0.getChild(0)).getName() == 'li'
-              newNode = liNode.clone()
-              newNode.append(this.wrapper)
-              node0.append(newNode)
-              node2.remove() if (node2 != null && node2.getName() == 'br')
-          else if node0.hasClass('cke_widget_wrapper') && node2 != null && (node2.getName() == 'ol' || node2.getName() == 'ul')
-            if (liNode = node2.getChild(0)).getName() == 'li'
-              newNode = liNode.clone()
-              newNode.append(this.wrapper)
-              node2.append(newNode, true) # prepend it
-              node1.remove() if (node1 != null && node1.getName() == 'br')
+
+      # console.log "INIT"
+      # console.log this.element
+      # console.log values.editables
+
+    # snippet['loadTemplate'] = (widget) ->
+    #   $.ajax
+    #     url: '/effective_regions/snippet'
+    #     type: 'GET'
+    #     data: {effective_regions: {name: widget.name, data: widget.data}}
+    #     async: false
+    #     complete: (data) -> $(widget.wrapper.$).find('.cke_widget_element').html(data.responseText)
+
+    # snippet['init'] = ->
+    #   for k, v of $(this.wrapper.$).find('.cke_widget_element').data('effective-snippet')
+    #     this.data[k] = v
+
+    #   this.on 'dialog', (evt) -> @configured = true
+    #   this.on 'data', (evt) -> @loadTemplate(evt.sender) if @configured
+    #   this.on 'ready', (evt) ->
+    #     return true if @configured != true || evt.sender.editor.config.effectiveRegionType != 'list_snippets'
+    #     editor = evt.sender.editor
+
+    #     # This makes sure an inserted snippet within a 'list_snippets' region is inserted under <ol><li>
+    #     try
+    #       root = editor.getSelection().getCommonAncestor()
+    #       root = root.getParent() while (root.hasClass('effective-region') == false && root.getName() != 'body')
+
+    #       children = root.getChildren()
+
+    #       node0 = children.getItem(0)
+    #       node1 = children.getItem(1)
+    #       node2 = children.getItem(2)
+
+    #       # Find the first OL/UL, find its LI, clone it, then insert the widget into that LI
+    #       if (node0.getName() == 'ol' || node0.getName() == 'ul') && (node1 == null || node1.hasClass('cke_widget_wrapper'))
+    #         if (liNode = node0.getChild(0)).getName() == 'li'
+    #           newNode = liNode.clone()
+    #           newNode.append(this.wrapper)
+    #           node0.append(newNode)
+    #           node2.remove() if (node2 != null && node2.getName() == 'br')
+    #       else if node0.hasClass('cke_widget_wrapper') && node2 != null && (node2.getName() == 'ol' || node2.getName() == 'ul')
+    #         if (liNode = node2.getChild(0)).getName() == 'li'
+    #           newNode = liNode.clone()
+    #           newNode.append(this.wrapper)
+    #           node2.append(newNode, true) # prepend it
+    #           node1.remove() if (node1 != null && node1.getName() == 'br')
 
     snippet
 }
