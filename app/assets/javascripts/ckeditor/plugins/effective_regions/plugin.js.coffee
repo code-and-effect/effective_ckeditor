@@ -125,9 +125,10 @@ Snippets = {
         async: false
         complete: (data) -> 
           element = $(data.responseText)
-          classes = element.attr('class').split(/\s+/)
+          classes = (element.attr('class') || '').split(/\s+/)
           widget.element.setHtml(element.html())
-          widget.element.addClass(c) for c in classes
+          if classes.length > 0
+            widget.element.addClass(c) for c in classes
 
     snippet['init'] = ->
       this.data[k] = v for k, v of $(this.element.$).data('snippet-data')
