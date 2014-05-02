@@ -160,8 +160,23 @@ Snippets = {
               node2.append(newNode, true) # prepend it
               node1.remove() if (node1 != null && node1.getName() == 'br')
 
-    console.log snippet
     snippet
+}
+
+Templates = {
+  templates: undefined
+
+  all: ->
+    if @templates == undefined
+      $.ajax
+        url: '/effective_regions/templates'
+        type: 'GET'
+        dataType: 'json'
+        async: false
+        complete: (data) -> Templates.templates = data.responseJSON
+    @templates
+
+  build: (definition) -> definition
 }
 
 BuildInsertSnippetDropdown = (editor, all_snippets) ->
@@ -201,78 +216,17 @@ CKEDITOR.plugins.add 'effective_regions',
     Regions.initFullRegion(editor) if editor.config.effectiveRegionType == 'full'
 
     # Snippets
-    all_snippets = Snippets.all()
-
-    # Insert Snippets Dropdown
-    BuildInsertSnippetDropdown(editor, all_snippets)
+    BuildInsertSnippetDropdown(editor, Snippets.all()) # Insert Snippets Dropdown
 
     # Initialize all the Snippets as CKeditor widgets
-    for name, values of all_snippets
-
+    for name, values of Snippets.all()
       snippet = Snippets.build(editor, name, values)
 
       editor.widgets.add(name, snippet)
       CKEDITOR.dialog.add(name, snippet.dialog_url) if snippet.dialog_url
 
-
-
-
-    #snippet['requiredContent'] = "#{values.wrapper_tag}(#{name}_snippet)"
-    # snippet['init'] = ->
-    #   console.log "INIT"
-    #   for k, v of $(this.wrapper.$).find('.cke_widget_element').data('effective-snippet')
-    #     this.data[k] = v
-
-    #   for editables_name, editables_values of values.editables
-    #     console.log editables_values.selector
-    #     console.log this.element.find(editables_values.selector)
-    #     console.log this.element.find(editables_values.selector).getItem(0).getHtml()
-    #     this.data[editables_name] = this.element.find(editables_values.selector).getItem(0).getHtml()
-
-
-      # console.log "INIT"
-      # console.log this.element
-      # console.log values.editables
-
-    # snippet['loadTemplate'] = (widget) ->
-    #   $.ajax
-    #     url: '/effective_regions/snippet'
-    #     type: 'GET'
-    #     data: {effective_regions: {name: widget.name, data: widget.data}}
-    #     async: false
-    #     complete: (data) -> $(widget.wrapper.$).find('.cke_widget_element').html(data.responseText)
-
-    # snippet['init'] = ->
-    #   for k, v of $(this.wrapper.$).find('.cke_widget_element').data('effective-snippet')
-    #     this.data[k] = v
-
-    #   this.on 'dialog', (evt) -> @configured = true
-    #   this.on 'data', (evt) -> @loadTemplate(evt.sender) if @configured
-    #   this.on 'ready', (evt) ->
-    #     return true if @configured != true || evt.sender.editor.config.effectiveRegionType != 'list_snippets'
-    #     editor = evt.sender.editor
-
-    #     # This makes sure an inserted snippet within a 'list_snippets' region is inserted under <ol><li>
-    #     try
-    #       root = editor.getSelection().getCommonAncestor()
-    #       root = root.getParent() while (root.hasClass('effective-region') == false && root.getName() != 'body')
-
-    #       children = root.getChildren()
-
-    #       node0 = children.getItem(0)
-    #       node1 = children.getItem(1)
-    #       node2 = children.getItem(2)
-
-    #       # Find the first OL/UL, find its LI, clone it, then insert the widget into that LI
-    #       if (node0.getName() == 'ol' || node0.getName() == 'ul') && (node1 == null || node1.hasClass('cke_widget_wrapper'))
-    #         if (liNode = node0.getChild(0)).getName() == 'li'
-    #           newNode = liNode.clone()
-    #           newNode.append(this.wrapper)
-    #           node0.append(newNode)
-    #           node2.remove() if (node2 != null && node2.getName() == 'br')
-    #       else if node0.hasClass('cke_widget_wrapper') && node2 != null && (node2.getName() == 'ol' || node2.getName() == 'ul')
-    #         if (liNode = node2.getChild(0)).getName() == 'li'
-    #           newNode = liNode.clone()
-    #           newNode.append(this.wrapper)
-    #           node2.append(newNode, true) # prepend it
-    #           node1.remove() if (node1 != null && node1.getName() == 'br')
+# Templates
+# these are loaded once per page, not for each editor (as the snippets are above)
+CKEDITOR.addTemplates 'effective_regions',
+  imagesPath: CKEDITOR.getUrl( '/assets/effective/templates/' ),
+  templates: Templates.build(template) for template in Templates.all()
