@@ -44,7 +44,7 @@ initEditor = (editor_div) ->
       shiftEnterMode = CKEDITOR.ENTER_BR
       startupOutlineBlocks = false
       toolbar = 'snippets'
-    when 'list_snippets'
+    when 'wrapped_snippets'
       enterMode = CKEDITOR.ENTER_BR
       shiftEnterMode = CKEDITOR.ENTER_BR
       startupOutlineBlocks = false
