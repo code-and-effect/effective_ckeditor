@@ -7,7 +7,7 @@ namespace :ckeditor do
     for file in Dir['public/assets/ckeditor/**/*.*', 'public/assets/effective_ckeditor/**/*.*', 'public/assets/effective/**/*.*']
       next unless file =~ fingerprint
       nondigest = file.sub fingerprint, '.' # contents-0d8ffa186a00f5063461bc0ba0d96087.css => contents.css
-      FileUtils.mv file, nondigest, verbose: true
+      FileUtils.cp file, nondigest, verbose: true
     end
   end
 end
