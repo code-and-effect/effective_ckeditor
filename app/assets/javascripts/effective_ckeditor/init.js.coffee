@@ -37,7 +37,7 @@ initEditor = (editor_div) ->
     when 'full'
       enterMode = CKEDITOR.ENTER_P
       shiftEnterMode = CKEDITOR.ENTER_BR
-      startupOutlineBlocks = true
+      startupOutlineBlocks = false
       toolbar = 'full'
     when 'snippets'
       enterMode = CKEDITOR.ENTER_BR

@@ -7,6 +7,7 @@ CKEDITOR.editorConfig = (config) ->
   config.templates = 'effective_regions'
   config.templates_files = []
   config.templates_replaceContent = false
+  CKEDITOR.dtd.$removeEmpty['i'] = false
 
   config.toolbar_full = [
     { name: 'save', items: ['Save', '-', 'NewPage'] },
