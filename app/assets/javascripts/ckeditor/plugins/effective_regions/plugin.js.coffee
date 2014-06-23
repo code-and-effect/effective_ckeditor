@@ -29,6 +29,17 @@ SaveAll = {
     {content: content, snippets: snippets}
 
   exec: (editor) ->
+    # Show a checkmark on the Save button
+    try
+      button = $("##{this.uiItems[0]._.id}").find('.cke_button__save_icon')
+
+      button.css('background-image', 'url(/assets/ckeditor/plugins/effective_regions/icons/saving.png)')
+      setTimeout(
+        -> button.css('background-image', 'url(/assets/ckeditor/plugins/effective_regions/icons/save.png)')
+      2000)
+    catch
+      'something'
+
     data = {}
     data[name] = @instanceData(instance) for name, instance of CKEDITOR.instances
 
@@ -54,6 +65,11 @@ Exit = {
 
 Regions = {
   initFullRegion: (editor) -> true
+
+  initPasteRegion: (editor) ->
+    # Disable some tags
+    filter = new CKEDITOR.filter('p h1 h2 h3 h4 h5 h6 strong em blockquote cite code pre br div ul ol table tr td th tbody thead tfoot b i sub sup big small hr; li[value]; a[!href]; img[*]')
+    editor.setActiveFilter(filter)
 
   initSimpleRegion: (editor) ->
     # Disable all tags
@@ -214,6 +230,7 @@ CKEDITOR.plugins.add 'effective_regions',
     Regions.initSnippetsRegion(editor) if editor.config.effectiveRegionType == 'snippets'
     Regions.initWrappedSnippetsRegion(editor) if editor.config.effectiveRegionType == 'wrapped_snippets'
     Regions.initFullRegion(editor) if editor.config.effectiveRegionType == 'full'
+    Regions.initPasteRegion(editor) if editor.config.effectiveRegionType == 'paste'
 
     # Snippets
     BuildInsertSnippetDropdown(editor, Snippets.all()) # Insert Snippets Dropdown
