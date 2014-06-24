@@ -4,7 +4,7 @@ CKEDITOR.plugins.add 'effective_assets',
   icons: 'effectiveassets',
   hidpi: true,
   init: (editor) ->
-      editor.ui.addButton 'EffectiveAssets', {label: 'Insert/Upload File', command: 'openEffectiveAssetsSnippetDialog'}
+      editor.ui.addButton 'EffectiveAssets', {label: 'Insert File', command: 'openEffectiveAssetsSnippetDialog'}
       editor.addCommand('openEffectiveAssetsSnippetDialog', OpenEffectiveAssetsSnippetDialog)
 
 OpenEffectiveAssetsSnippetDialog = {

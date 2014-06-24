@@ -7,8 +7,11 @@ CKEDITOR.editorConfig = (config) ->
   config.templates = 'effective_regions'
   config.templates_files = []
   config.templates_replaceContent = false
-  config.filebrowserUploadUrl = '/browser/browse.php'
-  config.filebrowserBrowseUrl = '/browser/upload.php'
+
+  config.filebrowserBrowseUrl = '/effective/assets?only=images'
+  config.filebrowserWindowHeight = 480
+  config.filebrowserWindowWidth = 640
+
   CKEDITOR.dtd.$removeEmpty['i'] = false
 
   config.toolbar_full = [
@@ -21,8 +24,9 @@ CKEDITOR.editorConfig = (config) ->
     '/',
     { name: 'definedstyles', items: ['Format'] },
     { name: 'links', items: ['Link', 'Unlink'] },
+    { name: 'insert', items: ['Image', 'tliyoutube', 'EffectiveAssets'] },
     { name: 'lists', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'] },
-    { name: 'insert', items: ['EffectiveAssets', 'Image', 'tliyoutube', 'Table', 'HorizontalRule', 'Blockquote', 'PageBreak'] },
+    { name: 'insert2', items: ['Table', 'HorizontalRule', 'Blockquote', 'PageBreak'] },
     { name: 'snippets', items: ['Templates', 'InsertSnippet'] }
   ]
 

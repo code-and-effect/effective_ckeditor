@@ -37,8 +37,6 @@ SaveAll = {
       setTimeout(
         -> button.css('background-image', 'url(/assets/ckeditor/plugins/effective_regions/icons/save.png)')
       2000)
-    catch
-      'something'
 
     data = {}
     data[name] = @instanceData(instance) for name, instance of CKEDITOR.instances
@@ -202,7 +200,10 @@ BuildInsertSnippetDropdown = (editor, all_snippets) ->
     panel: 
       css: [ CKEDITOR.skin.getPath( 'editor' ) ],
       multiSelect: false,
-    init: -> this.add(name, "#{values.label}", "#{values.description}") for name, values of all_snippets
+    init: -> 
+      for name, values of all_snippets
+        if name != 'effective_asset'
+          this.add(name, "#{values.label}", "#{values.description}") 
     onClick: (value) -> editor.getCommand(value).exec(editor)
     onOpen: (evt) ->
       this.showAll()
