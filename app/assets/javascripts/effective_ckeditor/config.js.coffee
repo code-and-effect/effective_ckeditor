@@ -7,6 +7,8 @@ CKEDITOR.editorConfig = (config) ->
   config.templates = 'effective_regions'
   config.templates_files = []
   config.templates_replaceContent = false
+  config.filebrowserUploadUrl = '/browser/browse.php'
+  config.filebrowserBrowseUrl = '/browser/upload.php'
   CKEDITOR.dtd.$removeEmpty['i'] = false
 
   config.toolbar_full = [
