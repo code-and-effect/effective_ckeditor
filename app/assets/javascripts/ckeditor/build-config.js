@@ -13,10 +13,10 @@
  * (1) http://ckeditor.com/builder
  *     Visit online builder to build CKEditor from scratch.
  *
- * (2) http://ckeditor.com/builder/c349e97b6c8a4e4a500559057d681812
+ * (2) http://ckeditor.com/builder/57d78ecc0c001acf02f4ff90715d7e95
  *     Visit online builder to build CKEditor, starting with the same setup as before.
  *
- * (3) http://ckeditor.com/builder/download/c349e97b6c8a4e4a500559057d681812
+ * (3) http://ckeditor.com/builder/download/57d78ecc0c001acf02f4ff90715d7e95
  *     Straight download link to the latest version of CKEditor (Optimized) with the same setup as before.
  *
  * NOTE:
@@ -28,13 +28,23 @@ var CKBUILDER_CONFIG = {
 	skin: 'moonocolor',
 	preset: 'basic',
 	ignore: [
-		'dev',
+		'.bender',
+		'.DS_Store',
 		'.gitignore',
 		'.gitattributes',
+		'.idea',
+		'.mailmap',
+		'bender.js',
+		'bender-err.log',
+		'bender-out.log',
+		'dev',
+		'node_modules',
+		'package.json',
 		'README.md',
-		'.mailmap'
+		'tests'
 	],
 	plugins : {
+		'base64image' : 1,
 		'basicstyles' : 1,
 		'blockquote' : 1,
 		'clipboard' : 1,
