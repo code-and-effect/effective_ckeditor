@@ -8,8 +8,8 @@ CKEDITOR.editorConfig = (config) ->
   config.templates_files = []
   config.templates_replaceContent = false
 
-  config.filebrowserWindowHeight = 480
-  config.filebrowserWindowWidth = 640
+  config.filebrowserWindowHeight = 600
+  config.filebrowserWindowWidth = 800 
   config.filebrowserBrowseUrl = '/effective/assets?only=images'
 
   CKEDITOR.dtd.$removeEmpty['i'] = false
