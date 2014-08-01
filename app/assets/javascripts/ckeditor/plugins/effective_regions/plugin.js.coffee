@@ -62,12 +62,12 @@ Exit = {
 }
 
 Regions = {
-  initFullRegion: (editor) -> true
-
-  initPasteRegion: (editor) ->
-    # Disable some tags
-    filter = new CKEDITOR.filter('p h1 h2 h3 h4 h5 h6 strong em blockquote cite code pre br div ul ol table tr td th tbody thead tfoot b i sub sup big small hr; li[value]; a[!href]; img[*]')
-    editor.setActiveFilter(filter)
+  initFullRegion: (editor) ->
+    # Remove any style attributes
+    editor.on 'paste', (evt) ->
+      data = $('<div>' + evt.data.dataValue + '</div>')
+      data.find('[style]').removeAttr('style')
+      evt.data.dataValue = data.html()
 
   initSimpleRegion: (editor) ->
     # Disable all tags
@@ -82,9 +82,9 @@ Regions = {
 
     # Paste as plain text, but this doesn't work all the way
     editor.config.forcePasteAsPlainText = true
-    editor.on 'afterPaste', (evt) -> editor.setData(editor.getData().replace( /<[^<|>]+?>/gi,''))
+    editor.on 'paste', (evt) -> evt.data.dataValue = evt.data.dataValue.replace(/<[^<|>]+?>/gi,'')
 
-  initSnippetsRegion: (editor) ->
+  initSnippetRegion: (editor) ->
     # Disable wrapping content with <p></p>.  This could break plugins.
     editor.config.autoParagraph = false
 
@@ -93,18 +93,7 @@ Regions = {
 
     # Paste as plain text, but this doesn't work all the way
     editor.config.forcePasteAsPlainText = true
-    editor.on 'afterPaste', (evt) -> editor.setData(editor.getData().replace(/<[^<|>]+?>/gi,''))
-
-  initWrappedSnippetsRegion: (editor) ->
-    # Disable wrapping content with <p></p>.  This could break plugins.
-    editor.config.autoParagraph = false
-
-    # Disable enter button
-    editor.on 'key', (event) -> event.cancel() unless (event.data.keyCode == 8)  # 8 is backspace
-
-    # Paste as plain text, but this doesn't work all the way
-    editor.config.forcePasteAsPlainText = true
-    editor.on 'afterPaste', (evt) -> editor.setData(editor.getData().replace(/<[^<|>]+?>/gi,''))
+    editor.on 'paste', (evt) -> evt.data.dataValue = evt.data.dataValue.replace(/<[^<|>]+?>/gi,'')
 }
 
 Snippets = {
@@ -227,10 +216,10 @@ CKEDITOR.plugins.add 'effective_regions',
     editor.addCommand('effectiveRegionsExit', Exit)
 
     # Regions
-    Regions.initSimpleRegion(editor) if editor.config.effectiveRegionType == 'simple'
-    Regions.initSnippetsRegion(editor) if editor.config.effectiveRegionType == 'snippets'
-    Regions.initWrappedSnippetsRegion(editor) if editor.config.effectiveRegionType == 'wrapped_snippets'
     Regions.initFullRegion(editor) if editor.config.effectiveRegionType == 'full'
+    Regions.initSimpleRegion(editor) if editor.config.effectiveRegionType == 'simple'
+    Regions.initSnippetRegion(editor) if editor.config.effectiveRegionType == 'snippets'
+    Regions.initSnippetRegion(editor) if editor.config.effectiveRegionType == 'wrapped_snippets'
 
     # Snippets
     BuildInsertSnippetDropdown(editor, Snippets.all()) # Insert Snippets Dropdown
