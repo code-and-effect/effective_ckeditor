@@ -52,7 +52,7 @@ SaveAll = {
 }
 
 Exit = {
-  exec: (editor) -> 
+  exec: (editor) ->
     url = $.cookie('effective_regions_editting')
 
     if url != undefined && url.length > 0
@@ -82,7 +82,7 @@ Regions = {
 
     # Paste as plain text, but this doesn't work all the way
     editor.config.forcePasteAsPlainText = true
-    editor.on 'afterPaste', (evt) -> editor.setData(editor.getData().replace( /<[^<|>]+?>/gi,'')) 
+    editor.on 'afterPaste', (evt) -> editor.setData(editor.getData().replace( /<[^<|>]+?>/gi,''))
 
   initSnippetsRegion: (editor) ->
     # Disable wrapping content with <p></p>.  This could break plugins.
@@ -93,7 +93,7 @@ Regions = {
 
     # Paste as plain text, but this doesn't work all the way
     editor.config.forcePasteAsPlainText = true
-    editor.on 'afterPaste', (evt) -> editor.setData(editor.getData().replace(/<[^<|>]+?>/gi,'')) 
+    editor.on 'afterPaste', (evt) -> editor.setData(editor.getData().replace(/<[^<|>]+?>/gi,''))
 
   initWrappedSnippetsRegion: (editor) ->
     # Disable wrapping content with <p></p>.  This could break plugins.
@@ -104,7 +104,7 @@ Regions = {
 
     # Paste as plain text, but this doesn't work all the way
     editor.config.forcePasteAsPlainText = true
-    editor.on 'afterPaste', (evt) -> editor.setData(editor.getData().replace(/<[^<|>]+?>/gi,'')) 
+    editor.on 'afterPaste', (evt) -> editor.setData(editor.getData().replace(/<[^<|>]+?>/gi,''))
 }
 
 Snippets = {
@@ -197,13 +197,13 @@ BuildInsertSnippetDropdown = (editor, all_snippets) ->
   editor.ui.addRichCombo 'InsertSnippet',
     label: 'Insert Snippet',
     title: 'Insert Snippet',
-    panel: 
+    panel:
       css: [ CKEDITOR.skin.getPath( 'editor' ) ],
       multiSelect: false,
-    init: -> 
+    init: ->
       for name, values of all_snippets
         if name != 'effective_asset'
-          this.add(name, "#{values.label}", "#{values.description}") 
+          this.add(name, "#{values.label}", "#{values.description}")
     onClick: (value) -> editor.getCommand(value).exec(editor)
     onOpen: (evt) ->
       this.showAll()
@@ -231,7 +231,6 @@ CKEDITOR.plugins.add 'effective_regions',
     Regions.initSnippetsRegion(editor) if editor.config.effectiveRegionType == 'snippets'
     Regions.initWrappedSnippetsRegion(editor) if editor.config.effectiveRegionType == 'wrapped_snippets'
     Regions.initFullRegion(editor) if editor.config.effectiveRegionType == 'full'
-    Regions.initPasteRegion(editor) if editor.config.effectiveRegionType == 'paste'
 
     # Snippets
     BuildInsertSnippetDropdown(editor, Snippets.all()) # Insert Snippets Dropdown
