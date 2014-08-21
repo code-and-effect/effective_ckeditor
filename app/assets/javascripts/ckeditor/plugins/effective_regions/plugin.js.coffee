@@ -102,7 +102,7 @@ Snippets = {
   all: ->
     if @snippets == undefined
       $.ajax
-        url: '/effective_regions/snippets'
+        url: '/effective/snippets'
         type: 'GET'
         dataType: 'json'
         async: false
@@ -122,7 +122,7 @@ Snippets = {
     snippet['upcast'] = (element) -> element.attributes['data-effective-snippet'] == name
     snippet['loadTemplate'] = (widget) ->
       $.ajax
-        url: '/effective_regions/snippet'
+        url: "/effective/snippet/#{widget.name}"
         type: 'GET'
         data: {effective_regions: {name: widget.name, data: widget.data}}
         async: false
@@ -172,7 +172,7 @@ Templates = {
   all: ->
     if @templates == undefined
       $.ajax
-        url: '/effective_regions/templates'
+        url: '/effective/templates'
         type: 'GET'
         dataType: 'json'
         async: false
