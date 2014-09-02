@@ -9,7 +9,7 @@ CKEDITOR.editorConfig = (config) ->
   config.templates_replaceContent = false
 
   config.filebrowserWindowHeight = 600
-  config.filebrowserWindowWidth = 800 
+  config.filebrowserWindowWidth = 800
   config.filebrowserBrowseUrl = '/effective/assets?only=images'
 
   CKEDITOR.dtd.$removeEmpty['i'] = false
@@ -30,18 +30,17 @@ CKEDITOR.editorConfig = (config) ->
     { name: 'snippets', items: ['Templates', 'InsertSnippet'] }
   ]
 
-  config.toolbar_simple = [
-    ['Save', '-', 'NewPage'], 
-    ['Undo', 'Redo'],
-    ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord'],
-    ['Exit']
-  ]
-
   config.toolbar_snippets = [
-    ['Save', '-', 'NewPage'], 
+    ['Save', '-', 'NewPage'],
     ['Sourcedialog', '-', 'ShowBlocks'],
     ['Undo', 'Redo'],
     { name: 'snippets', items: ['InsertSnippet'] },
     ['Exit']
   ]
 
+  config.toolbar_simple = [
+    ['Save', '-', 'NewPage'],
+    ['Undo', 'Redo'],
+    ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord'],
+    ['Exit']
+  ]
