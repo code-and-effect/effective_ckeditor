@@ -49,6 +49,9 @@ SaveAll = {
       dataType: 'json'
       data: { effective_regions: data }
       async: false
+      complete: (data) ->
+        if data.responseText == 'refresh'
+          location.reload(true)
 }
 
 Exit = {
