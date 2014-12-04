@@ -10,9 +10,9 @@ Rails 3.2.x and Rails 4 compatible.
 
 Please see effective_regions (https://github.com/code-and-effect/effective_regions)
 
-## CKEditor 
+## CKEditor
 
-This gem packages only the javascript parts of CKEditor and adds one plugin, effective_regions
+This gem packages only the javascript parts of CKEditor and adds one exclusive plugin, effective_regions
 
 ## License
 
