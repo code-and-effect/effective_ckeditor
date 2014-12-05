@@ -1,6 +1,6 @@
 # Effective CKEditor
 
-Wraps the CKEditor Javscript library (http://ckeditor.com/) for use with the effective_regions gem.
+An actually-good full-screen WYSIWYG editor. Packages the CKEditor Javscript library for the asset pipeline and includes an exclusive CKEditor plugin for use with the effective_regions gem.
 
 Not intended for use as a standalone gem.
 
@@ -16,9 +16,10 @@ This gem packages only the javascript parts of CKEditor and adds one exclusive p
 
 ## License
 
-MIT License.  Copyright Code and Effect Inc. http://www.codeandeffect.com
+MIT License.  Copyright [Code and Effect Inc.](http://www.codeandeffect.com/)
 
-You are not granted rights or licenses to the trademarks of Code and Effect
+Code and Effect is the product arm of [AgileStyle](http://www.agilestyle.com/), an Edmonton-based shop that specializes in building custom web applications with Ruby on Rails.
+
 
 ## Credits
 
