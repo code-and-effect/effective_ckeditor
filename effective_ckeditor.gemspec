@@ -12,14 +12,15 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/code-and-effect/effective_ckeditor"
   s.summary     = "Wraps the CKEditor Javscript library (http://ckeditor.com/) for use with the effective_regions gem."
   s.description = "Wraps the CKEditor Javscript library (http://ckeditor.com/) for use with the effective_regions gem. Not intended for use as a standalone gem."
+  s.licenses    = ['MIT']
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["spec/**/*"]
 
-  s.add_dependency "rails"
+  s.add_dependency "rails", [">= 3.2.0"]
 
-  s.add_development_dependency "factory_girl_rails"
-  s.add_development_dependency "rspec-rails"
-  s.add_development_dependency "shoulda-matchers"
-  s.add_development_dependency "sqlite3"
+  # s.add_development_dependency "factory_girl_rails"
+  # s.add_development_dependency "rspec-rails"
+  # s.add_development_dependency "shoulda-matchers"
+  # s.add_development_dependency "sqlite3"
 end
