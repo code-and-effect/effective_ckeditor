@@ -1,0 +1,18 @@
+1.) Go to www.ckeditor.com
+2.) Customize and Download
+3.) Upload the build-config.js from this ./ckeditor/
+4.) Select Skin Moono Color skin (scroll to the right)
+5.) Language English
+6.) Optimized Source
+7.) Unzip the ckeditor.zip over the ./ckeditor/ directory
+
+8.) Delete the ./ckeditor/samples/ directory
+
+9.) Do the following Search&Replaces on the ./ckeditor/plugins/tliyoutube/dialogs/tliyoutube.js file:
+  - Inserisci filmato YouTube -> Insert YouTube video
+  - Correggi e riprova! -> Please copy & paste the youtube URL from your browser's location bar.
+  - Incolla qui l'URL del filmato da inserire -> URL to YouTube video (should start with http:// or https://):
+  - URL invalido! deve essere simile a -> Invalid URL. Expecting something like:
+
+10.) Do the following Search&Replaces on the ./ckeditor/ckeditor.js:
+  - Inserisci filmato YouTube -> Insert YouTube video
