@@ -24,7 +24,7 @@ CKEDITOR.editorConfig = (config) ->
     '/',
     { name: 'definedstyles', items: ['Format'] },
     { name: 'links', items: ['Link', 'Unlink'] },
-    { name: 'insert', items: ['Image', 'tliyoutube', 'EffectiveAssets', 'EffectiveMenus'] },
+    { name: 'insert', items: ['Image', 'tliyoutube', 'EffectiveAssets'] },
     { name: 'lists', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'] },
     { name: 'insert2', items: ['Table', 'HorizontalRule', 'Blockquote', 'PageBreak'] },
     { name: 'snippets', items: ['Templates', 'InsertSnippet'] }

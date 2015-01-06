@@ -3,11 +3,18 @@
 }
 
 .effective-menu {
+  border: 1px dotted #4195fc;
+
   li.divider {
     height: 3px;
   }
+
+  .menu-item {
+    display: none;
+  }
 }
 
+// Top level placeholder
 ul.nav.effective-menu > li.placeholder {
   &:before {
     margin-top: -6px;
@@ -18,6 +25,7 @@ ul.nav.effective-menu > li.placeholder {
   }
 }
 
+// Sub level placeholder
 .effective-menu li.placeholder {
   position: relative;
 
@@ -34,10 +42,4 @@ ul.nav.effective-menu > li.placeholder {
     border-bottom: 5px solid transparent;
     border-right: none;
   }
-}
-
-.effective-menu .menu-item {
-  display: none;
-  padding: 2px 20px;
-  border: 1px dotted blue;
 }

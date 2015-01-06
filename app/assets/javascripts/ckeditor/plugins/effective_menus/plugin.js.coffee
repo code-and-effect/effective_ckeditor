@@ -118,11 +118,9 @@
 ) window.jQuery, window
 
 
-# AND THE REST IS A CKEDITOR PLUGIn
+# AND THE REST IS A CKEDITOR PLUGIN
 
 CKEDITOR.plugins.add 'effective_menus',
-  icons: 'effectivemenus',
-  hidpi: true,
   init: (editor) ->
     $('.effective-menu').effectiveMenuEditor() # Initialize the EffectiveMenus
 
@@ -144,32 +142,28 @@ CKEDITOR.plugins.add 'effective_menus',
                 id: 'effective_menu_item_title',
                 type: 'text',
                 label: 'Title',
-                validate: CKEDITOR.dialog.validate.notEmpty('Must have a title')
+                validate: CKEDITOR.dialog.validate.notEmpty('please give this menu item a title')
                 setup: (element) ->
-                  console.log 'setup title'
-                  console.log element
-                  this.setValue('title from matt')
-                #commit: (element) -> widget.setData('html_class', this.getValue()) if widget
+                  this.setValue(element.children('.menu-item').children("input[name$='[title]']").val())
+                commit: (element) ->
+                  element.children('.menu-item').children("input[name$='[title]']").val(this.getValue())
+                  element.children('a').text(this.getValue())
               },
               {
                 id: 'effective_menu_item_url',
                 type: 'text',
                 label: 'URL',
-                validate: CKEDITOR.dialog.validate.notEmpty('Must have a url')
+                validate: CKEDITOR.dialog.validate.notEmpty('please give this menu item a url')
+                setup: (element) ->
+                  this.setValue(element.children('.menu-item').children("input[name$='[url]']").val())
+                commit: (element) ->
+                  element.children('.menu-item').children("input[name$='[url]']").val(this.getValue())
+                  element.children('a').attr('href', this.getValue())
               }
             ] # /tab1 elements
           }
         ], # /contents
 
-        onShow: (thing) ->
-          console.log 'on show'
-          console.log this
-          console.log this.effective_menu_item.text()
-
-          # console.log 'on show'
-          # console.log this
-          # console.log thing
-          # console.log editor
-          # console.log 'calling setup Content'
-          this.setupContent()
+        onShow: -> this.setupContent(this.effective_menu_item)
+        onOk: -> this.commitContent(this.effective_menu_item)
       }
