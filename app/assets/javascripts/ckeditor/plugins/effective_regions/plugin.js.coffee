@@ -36,18 +36,24 @@ SaveAll = {
       button.css('background-image', 'url(/assets/ckeditor/plugins/effective_regions/icons/saving.png)')
       setTimeout(
         -> button.css('background-image', 'url(/assets/ckeditor/plugins/effective_regions/icons/save.png)')
-      2000)
-
-    data = {}
-    data[name] = @instanceData(instance) for name, instance of CKEDITOR.instances
+        2000
+      )
 
     url = window.location.protocol + '//' + window.location.host + '/edit' + window.location.pathname
+
+    # Collect all Effective::Region Data
+    regionData = {}
+    regionData[name] = @instanceData(instance) for name, instance of CKEDITOR.instances
+
+    # Collect all the Effective::Menu Data
+    menuData = {}
+    $('.effective-menu').effectiveMenuEditor('serialize', menuData)
 
     $.ajax
       url: url
       type: 'PUT'
       dataType: 'json'
-      data: { effective_regions: data }
+      data: { effective_regions: regionData, effective_menus: menuData }
       async: false
       complete: (data) ->
         if data.responseText == 'refresh'

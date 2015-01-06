@@ -1,7 +1,7 @@
 CKEDITOR.editorConfig = (config) ->
   config.startupShowBorders = true
 
-  config.extraPlugins = 'effective_regions,effective_assets'
+  config.extraPlugins = 'effective_regions,effective_assets,effective_menus'
   config.format_tags = 'p;h1;h2;h3;h4;h5;h6;pre;div'
 
   config.templates = 'effective_regions'
@@ -24,7 +24,7 @@ CKEDITOR.editorConfig = (config) ->
     '/',
     { name: 'definedstyles', items: ['Format'] },
     { name: 'links', items: ['Link', 'Unlink'] },
-    { name: 'insert', items: ['Image', 'tliyoutube', 'EffectiveAssets'] },
+    { name: 'insert', items: ['Image', 'tliyoutube', 'EffectiveAssets', 'EffectiveMenus'] },
     { name: 'lists', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'] },
     { name: 'insert2', items: ['Table', 'HorizontalRule', 'Blockquote', 'PageBreak'] },
     { name: 'snippets', items: ['Templates', 'InsertSnippet'] }
