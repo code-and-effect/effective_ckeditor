@@ -8,7 +8,6 @@
     draggable: null
 
     constructor: (el, options) ->
-      console.log 'constructed'
       @options = $.extend({}, @defaults, options)
       @menu = $(el)
 
@@ -121,46 +120,123 @@
 # AND THE REST IS A CKEDITOR PLUGIN
 
 CKEDITOR.plugins.add 'effective_menus',
+
+
   init: (editor) ->
     $('.effective-menu').effectiveMenuEditor() # Initialize the EffectiveMenus
 
     CKEDITOR.dialog.add 'effectiveMenusDialog', (editor) ->
       {
         title: 'Effective Menu Item'
-        minWidth: 650,
-        minHeight: 500,
+        minWidth: 350,
+        minHeight: 250,
         contents: [
           {
-            id: 'tab1',
+            id: 'item',
             label: 'Menu Item'
             elements: [
               {
-                type: 'html',
-                html: "<p>This is some text</p>"
-              },
-              {
-                id: 'effective_menu_item_title',
+                id: 'title',
                 type: 'text',
                 label: 'Title',
-                validate: CKEDITOR.dialog.validate.notEmpty('please give this menu item a title')
+                validate: CKEDITOR.dialog.validate.notEmpty('please enter a title')
                 setup: (element) ->
                   this.setValue(element.children('.menu-item').children("input[name$='[title]']").val())
                 commit: (element) ->
                   element.children('.menu-item').children("input[name$='[title]']").val(this.getValue())
                   element.children('a').text(this.getValue())
               },
+              {type: 'html', html: '<br>'},
               {
-                id: 'effective_menu_item_url',
+                type: 'hbox',
+                children: [
+                  {
+                    id: 'source',
+                    type: 'radio',
+                    label: 'Link Source',
+                    items: [['Page', 'Page'], ['URL', 'URL']]
+                    setup: (element) ->
+                      menuable_id = element.children('.menu-item').children("input[name$='[menuable_id]']").val() || ''
+                      if menuable_id.length > 0 then this.setValue('Page') else this.setValue('URL')
+                    onChange: (event) ->
+                      if this.getValue() == 'Page'
+                        this.getDialog().getContentElement('item', 'menuable_id').getElement().show()
+                        this.getDialog().getContentElement('item', 'url').getElement().hide()
+
+                      if this.getValue() == 'URL'
+                        this.getDialog().getContentElement('item', 'menuable_id').getElement().hide()
+                        this.getDialog().getContentElement('item', 'url').getElement().show()
+                  },
+                  {type: 'html', html: ''}
+                ]
+              },
+              {
+                id: 'menuable_id',
+                type: 'select',
+                label: 'Page',
+                items: (
+                  pages = []
+                  $.ajax
+                    url: '/admin/pages'
+                    dataType: 'json'
+                    async: false
+                    complete: (data) -> pages = data.responseJSON
+                  pages
+                ),
+                setup: (element) ->
+                  this.setValue(element.children('.menu-item').children("input[name$='[menuable_id]']").val())
+                commit: (element) ->
+                  if this.getElement().isVisible()
+                    element.children('.menu-item').children("input[name$='[menuable_id]']").val(this.getValue())
+                    element.children('.menu-item').children("input[name$='[menuable_type]']").val('Effective::Page')
+                  else
+                    element.children('.menu-item').children("input[name$='[menuable_id]']").val('')
+                    element.children('.menu-item').children("input[name$='[menuable_type]']").val('')
+                validate: ->
+                  if this.getElement().isVisible() && (this.getValue() || '').length == 0
+                    CKEDITOR.dialog.validate.notEmpty('please select a page').apply(this)
+              },
+              {
+                id: 'url',
                 type: 'text',
                 label: 'URL',
-                validate: CKEDITOR.dialog.validate.notEmpty('please give this menu item a url')
                 setup: (element) ->
                   this.setValue(element.children('.menu-item').children("input[name$='[url]']").val())
                 commit: (element) ->
-                  element.children('.menu-item').children("input[name$='[url]']").val(this.getValue())
-                  element.children('a').attr('href', this.getValue())
+                  if this.getElement().isVisible() then value = this.getValue() else value = ''
+
+                  element.children('.menu-item').children("input[name$='[url]']").val(value)
+                  element.children('a').attr('href', value || '#')
+                validate: ->
+                  if this.getElement().isVisible() && (this.getValue() || '').length == 0
+                    CKEDITOR.dialog.validate.notEmpty('please enter a URL').apply(this)
               }
             ] # /tab1 elements
+          },
+          {
+            id: 'advanced',
+            label: 'Advanced'
+            elements: [
+              {
+                id: 'new_window',
+                type: 'checkbox',
+                label: 'Open in new window',
+                setup: (element) ->
+                  value = element.children('.menu-item').children("input[name$='[new_window]']").val()
+                  if value == 'true' then this.setValue(true) else this.setValue(false)
+                commit: (element) ->
+                  element.children('.menu-item').children("input[name$='[new_window]']").val(this.getValue())
+              },
+              {
+                id: 'classes',
+                type: 'text',
+                label: 'HTML Classes',
+                setup: (element) ->
+                  this.setValue(element.children('.menu-item').children("input[name$='[classes]']").val())
+                commit: (element) ->
+                  element.children('.menu-item').children("input[name$='[classes]']").val(this.getValue())
+              }
+            ]
           }
         ], # /contents
 
