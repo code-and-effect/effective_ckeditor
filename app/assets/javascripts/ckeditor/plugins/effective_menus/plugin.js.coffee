@@ -84,6 +84,27 @@
       @menu.on 'click', 'a', (event) -> event.preventDefault()
 
     serialize: (retval) ->
+
+      # console.log "============ BEFORE =============="
+      # @menu.find('li').each (index, item) =>
+      #   item = $(item)
+      #   label = item.children('a').first().text()
+      #   left = item.children('.menu-item').children("input[name$='[lft]']").val()
+      #   right = item.children('.menu-item').children("input[name$='[rgt]']").val()
+      #   console.log "[#{label}] #{left}, #{right}"
+      # console.log "=================================="
+
+      @assignLftRgt(@menu, 1)
+
+      # console.log "============ AFTER =============="
+      # @menu.find('li').each (index, item) =>
+      #   item = $(item)
+      #   label = item.children('a').first().text()
+      #   left = item.children('.menu-item').children("input[name$='[lft]']").val()
+      #   right = item.children('.menu-item').children("input[name$='[rgt]']").val()
+      #   console.log "[#{label}] #{left}, #{right}"
+      # console.log "=================================="
+
       items = {}
 
       $.each @menu.find('input').serializeArray(), ->
@@ -97,13 +118,19 @@
 
       retval[@menu.data('effective-menu-id')] = items
 
-    assignLftRgt: ->
-      stack = []
-      console.log @menu.find('li')
+    assignLftRgt: (parent, lft) ->
+      rgt = lft + 1
 
-      @menu.find('li').each (item) ->
-        console.log 'item'
+      parent.children('.dropdown-menu').children('li').each (_, child) =>
+        rgt = @assignLftRgt($(child), rgt)
 
+      parent.children('li').each (_, child) =>
+        rgt = @assignLftRgt($(child), rgt)
+
+      parent.children('.menu-item').children("input[name$='[lft]']").val(lft)
+      parent.children('.menu-item').children("input[name$='[rgt]']").val(rgt)
+
+      rgt + 1
 
   $.fn.extend effectiveMenuEditor: (option, args...) ->
     @each ->
@@ -241,5 +268,9 @@ CKEDITOR.plugins.add 'effective_menus',
         ], # /contents
 
         onShow: -> this.setupContent(this.effective_menu_item)
-        onOk: -> this.commitContent(this.effective_menu_item)
+        onOk: ->
+          this.commitContent(this.effective_menu_item)
+          this.effective_menu_item = undefined
+        onCancel: ->
+          this.effective_menu_item = undefined
       }
