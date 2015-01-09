@@ -48,6 +48,8 @@
 
       @menu.on 'dragstart', 'li', (event) =>
         @draggable = node = $(event.currentTarget)
+        node.find('.open').removeClass('open')
+
         event.originalEvent.dataTransfer.setData('text/html', node[0].outerHTML)
 
         node.css('opacity', '0.4') # Show it slightly removed from the DOM
@@ -60,17 +62,12 @@
         return false unless @draggable
         return false if @draggable.find(node).length > 0 # Can't drag a parent into a child
 
-        console.log 'dragover'
-
-        if (node.hasClass('dropdown') || node.hasClass('dropdown-submenu')) && !node.hasClass('open') # This is a menu, expand it
+        if node.hasClass('dropdown') && !node.hasClass('open') # This is a menu, expand it
           @menu.find('.open').removeClass('open')
           node.parentsUntil(@menu, 'li').andSelf().addClass('open')
         else
           event.preventDefault() # Enable drag and drop
-
-          # If I've been hovering for expandThreshold, expand the node to have a dropdown
-          if @droppable.time? && ((new Date().getTime()) - @droppable.time) > @options.expandThreshold
-            @convertToDropdown(node)
+          @convertToDropdown(node) if @droppable.time? && ((new Date().getTime()) - @droppable.time) > @options.expandThreshold
 
         # If I don't have the placeholder class already
         if node.hasClass('placeholder') == false
@@ -81,46 +78,49 @@
 
       @menu.on 'dragend', 'li', (event) =>
         return false unless @draggable
-
         node = $(event.currentTarget)
+
+        @cleanupAfterDrop()
         node.css('opacity', '1.0')
-        @menu.removeClass('dragging')
-
-        @menu.find('.placeholder').removeClass('placeholder')
-        @menu.find('.effective-menu-expand').remove()
-        @menu.find('.open').removeClass('open')
-
-        @draggable = null
-        @droppable = null
 
       @menu.on 'drop', 'li', (event) =>
         return false unless @draggable
-
         node = $(event.currentTarget)
 
         node.before(event.originalEvent.dataTransfer.getData('text/html'))
+        @draggable.remove()
 
-        @menu.removeClass('dragging').find('.placeholder').removeClass('placeholder')
-        @menu.find('.effective-menu-expand').remove()
-        @menu.find('.open').removeClass('open')
-        node.parentsUntil(@menu, 'li').addClass('open')
-
-        @draggable.remove() if @draggable
-        @draggable = null
-        @droppable = null
+        @cleanupAfterDrop()
+        node.parentsUntil(@menu, 'li.dropdown').addClass('open')
 
         event.stopPropagation()
         event.preventDefault()
 
     convertToDropdown: (node) ->
-      return false if node.hasClass('dropdown') || node.hasClass('effective-menu-expand') #|| node.children('.expand').length > 0
+      return false if node.hasClass('dropdown') || node.hasClass('effective-menu-expand')
 
       node.append(@menu.data('effective-menu-expand-html'))
-      node.addClass('dropdown').addClass('open')
-      console.log node.children('a')
-
+      node.addClass('dropdown')
       node.children('a').attr('data-toggle', 'dropdown')
 
+      @menu.find('.open').removeClass('open')
+      node.parentsUntil(@menu, 'li.dropdown').addClass('open')
+
+    cleanupAfterDrop: ->
+      @menu.find('.effective-menu-expand').remove()
+
+      # Convert empty dropdowns back to leafs
+      @menu.find('.dropdown-menu:empty').each (index, item) ->
+        node = $(item).closest('.dropdown')
+        node.removeClass('dropdown').removeClass('open')
+        node.children('a').removeAttr('data-toggle')
+        node.children('.dropdown-menu').remove()
+
+      @menu.removeClass('dragging')
+      @menu.find('.placeholder,.open').removeClass('placeholder').removeClass('open')
+
+      @draggable = null
+      @droppable = null
 
     serialize: (retval) ->
 
