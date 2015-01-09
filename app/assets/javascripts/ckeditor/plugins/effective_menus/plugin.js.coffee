@@ -3,22 +3,48 @@
   class EffectiveMenuEditor
     defaults:
       menuClass: 'effective-menu'
+      expandThreshold: 1000
 
     menu: null
     draggable: null
+    droppable: null
 
     constructor: (el, options) ->
       @options = $.extend({}, @defaults, options)
       @menu = $(el)
 
-      @initDragDropEvents()
       @initCkEditorEvents()
       @initAdditionalEvents()
+      @initDragDropEvents()
       true
 
+    initCkEditorEvents: ->
+      @menu.on 'click', 'li.dropdown.open', (event) ->
+        event.stopPropagation()
+        CKEDITOR.instances[Object.keys(CKEDITOR.instances)[0]].openDialog 'effectiveMenusDialog', (dialog) ->
+          dialog.effective_menu_item = $(event.currentTarget)
+
+      @menu.on 'click', '.dropdown-menu > li.dropdown', (event) ->
+        event.stopPropagation()
+        CKEDITOR.instances[Object.keys(CKEDITOR.instances)[0]].openDialog 'effectiveMenusDialog', (dialog) ->
+          dialog.effective_menu_item = $(event.currentTarget)
+
+      @menu.on 'click', 'li:not(.dropdown)', (event) ->
+        event.stopPropagation()
+        CKEDITOR.instances[Object.keys(CKEDITOR.instances)[0]].openDialog 'effectiveMenusDialog', (dialog) ->
+          dialog.effective_menu_item = $(event.currentTarget)
+
+    initAdditionalEvents: ->
+      @menu.on 'click', 'a', (event) -> event.preventDefault()
+
     initDragDropEvents: ->
-      @menu.on 'dragenter', 'li', (event) => event.preventDefault() if @draggable  # enable drag and drop
-      @menu.on 'dragleave', 'li', (event) => event.preventDefault() if @draggable # enable drag and drop
+      @menu.on 'dragenter', 'li', (event) =>
+        @droppable = null
+        @droppable = {item: $(event.currentTarget), time: new Date().getTime()}
+        event.preventDefault() if @draggable  # enable drag and drop
+
+      @menu.on 'dragleave', 'li', (event) =>
+        event.preventDefault() if @draggable # enable drag and drop
 
       @menu.on 'dragstart', 'li', (event) =>
         @draggable = node = $(event.currentTarget)
@@ -29,15 +55,22 @@
         event.stopPropagation()
 
       @menu.on 'dragover', 'li', (event) =>
-        return false unless @draggable
-
         node = $(event.currentTarget)
+
+        return false unless @draggable
+        return false if @draggable.find(node).length > 0 # Can't drag a parent into a child
+
+        console.log 'dragover'
 
         if (node.hasClass('dropdown') || node.hasClass('dropdown-submenu')) && !node.hasClass('open') # This is a menu, expand it
           @menu.find('.open').removeClass('open')
           node.parentsUntil(@menu, 'li').andSelf().addClass('open')
         else
-          event.preventDefault()
+          event.preventDefault() # Enable drag and drop
+
+          # If I've been hovering for expandThreshold, expand the node to have a dropdown
+          if @droppable.time? && ((new Date().getTime()) - @droppable.time) > @options.expandThreshold
+            @convertToDropdown(node)
 
         # If I don't have the placeholder class already
         if node.hasClass('placeholder') == false
@@ -51,8 +84,14 @@
 
         node = $(event.currentTarget)
         node.css('opacity', '1.0')
-        @menu.removeClass('dragging').find('.placeholder').removeClass('placeholder')
+        @menu.removeClass('dragging')
+
+        @menu.find('.placeholder').removeClass('placeholder')
+        @menu.find('.effective-menu-expand').remove()
+        @menu.find('.open').removeClass('open')
+
         @draggable = null
+        @droppable = null
 
       @menu.on 'drop', 'li', (event) =>
         return false unless @draggable
@@ -62,26 +101,26 @@
         node.before(event.originalEvent.dataTransfer.getData('text/html'))
 
         @menu.removeClass('dragging').find('.placeholder').removeClass('placeholder')
+        @menu.find('.effective-menu-expand').remove()
+        @menu.find('.open').removeClass('open')
+        node.parentsUntil(@menu, 'li').addClass('open')
 
         @draggable.remove() if @draggable
         @draggable = null
+        @droppable = null
 
         event.stopPropagation()
         event.preventDefault()
 
-    initCkEditorEvents: ->
-      @menu.on 'click', 'li.dropdown.open', (event) ->
-        event.stopPropagation()
-        CKEDITOR.instances[Object.keys(CKEDITOR.instances)[0]].openDialog 'effectiveMenusDialog', (dialog) ->
-          dialog.effective_menu_item = $(event.currentTarget)
+    convertToDropdown: (node) ->
+      return false if node.hasClass('dropdown') || node.hasClass('effective-menu-expand') #|| node.children('.expand').length > 0
 
-      @menu.on 'click', 'li:not(.dropdown)', (event) ->
-        event.stopPropagation()
-        CKEDITOR.instances[Object.keys(CKEDITOR.instances)[0]].openDialog 'effectiveMenusDialog', (dialog) ->
-          dialog.effective_menu_item = $(event.currentTarget)
+      node.append(@menu.data('effective-menu-expand-html'))
+      node.addClass('dropdown').addClass('open')
+      console.log node.children('a')
 
-    initAdditionalEvents: ->
-      @menu.on 'click', 'a', (event) -> event.preventDefault()
+      node.children('a').attr('data-toggle', 'dropdown')
+
 
     serialize: (retval) ->
 
@@ -131,6 +170,7 @@
       parent.children('.menu-item').children("input[name$='[rgt]']").val(rgt)
 
       rgt + 1
+
 
   $.fn.extend effectiveMenuEditor: (option, args...) ->
     @each ->
