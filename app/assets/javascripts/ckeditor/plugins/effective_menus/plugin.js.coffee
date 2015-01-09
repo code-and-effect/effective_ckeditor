@@ -127,7 +127,7 @@
       node.parentsUntil(@menu, 'li.dropdown').addClass('open')
 
     cleanupAfterDrop: ->
-      @menu.find('li.effective-menu-expand').remove()
+      @menu.find('meta,li.effective-menu-expand').remove()
 
       # Convert empty dropdowns back to leafs
       @menu.find('.dropdown-menu:empty').each (index, item) ->
