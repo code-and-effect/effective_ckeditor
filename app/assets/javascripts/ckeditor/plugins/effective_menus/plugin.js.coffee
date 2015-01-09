@@ -70,7 +70,7 @@
         event.preventDefault()
 
     initCkEditorEvents: ->
-      @menu.on 'dblclick', 'li.dropdown', (event) ->
+      @menu.on 'click', 'li.dropdown.open', (event) ->
         event.stopPropagation()
         CKEDITOR.instances[Object.keys(CKEDITOR.instances)[0]].openDialog 'effectiveMenusDialog', (dialog) ->
           dialog.effective_menu_item = $(event.currentTarget)
