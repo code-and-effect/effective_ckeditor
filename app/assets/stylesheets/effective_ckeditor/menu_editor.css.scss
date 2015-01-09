@@ -1,5 +1,8 @@
-.effective-menu.dragging, .effective-menu.dragging > * {
+.effective-menu.dragging, {
   cursor: move !important;
+
+  li, a, * { cursor: move !important; }
+
 }
 
 .effective-menu {

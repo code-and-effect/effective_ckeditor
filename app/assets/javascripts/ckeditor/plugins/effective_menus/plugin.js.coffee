@@ -19,18 +19,21 @@
       true
 
     initCkEditorEvents: ->
-      @menu.on 'click', 'li.dropdown.open', (event) ->
+      @menu.on 'click', 'li.dropdown.open', (event) =>
         event.stopPropagation()
+        @menu.find('.open').removeClass('open')
         CKEDITOR.instances[Object.keys(CKEDITOR.instances)[0]].openDialog 'effectiveMenusDialog', (dialog) ->
           dialog.effective_menu_item = $(event.currentTarget)
 
-      @menu.on 'click', '.dropdown-menu > li.dropdown', (event) ->
+      @menu.on 'click', '.dropdown-menu > li.dropdown', (event) =>
         event.stopPropagation()
+        @menu.find('.open').removeClass('open')
         CKEDITOR.instances[Object.keys(CKEDITOR.instances)[0]].openDialog 'effectiveMenusDialog', (dialog) ->
           dialog.effective_menu_item = $(event.currentTarget)
 
-      @menu.on 'click', 'li:not(.dropdown)', (event) ->
+      @menu.on 'click', 'li:not(.dropdown)', (event) =>
         event.stopPropagation()
+        @menu.find('.open').removeClass('open')
         CKEDITOR.instances[Object.keys(CKEDITOR.instances)[0]].openDialog 'effectiveMenusDialog', (dialog) ->
           dialog.effective_menu_item = $(event.currentTarget)
 
@@ -60,7 +63,7 @@
         node = $(event.currentTarget)
 
         return false unless @draggable
-        return false if @draggable.find(node).length > 0 # Can't drag a parent into a child
+        return false if @draggable.find(node).length > 0 # Don't drag a parent into a child
 
         if node.hasClass('dropdown') && !node.hasClass('open') # This is a menu, expand it
           @menu.find('.open').removeClass('open')
@@ -107,7 +110,7 @@
       node.parentsUntil(@menu, 'li.dropdown').addClass('open')
 
     cleanupAfterDrop: ->
-      @menu.find('.effective-menu-expand').remove()
+      @menu.find('li.effective-menu-expand').remove()
 
       # Convert empty dropdowns back to leafs
       @menu.find('.dropdown-menu:empty').each (index, item) ->
