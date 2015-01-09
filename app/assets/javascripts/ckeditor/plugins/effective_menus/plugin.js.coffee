@@ -3,7 +3,7 @@
   class EffectiveMenuEditor
     defaults:
       menuClass: 'effective-menu'
-      expandThreshold: 1000
+      expandThreshold: 600
 
     menu: null
     draggable: null
@@ -14,8 +14,9 @@
       @menu = $(el)
 
       @initCkEditorEvents()
-      @initAdditionalEvents()
+      @initAddRemoveEvents()
       @initDragDropEvents()
+      @initAdditionalEvents()
       true
 
     initCkEditorEvents: ->
@@ -37,8 +38,23 @@
         CKEDITOR.instances[Object.keys(CKEDITOR.instances)[0]].openDialog 'effectiveMenusDialog', (dialog) ->
           dialog.effective_menu_item = $(event.currentTarget)
 
+    initAddRemoveEvents: ->
+      @menu.on 'mouseover', (event) => @menu.children('.actions').children('.add-node').show()
+      @menu.on 'mouseout', (event) => @menu.children('.actions').children('.add-node').hide()
+
+      @menu.on 'click', '.add-node', (event) =>
+        event.preventDefault()
+        unique_id = new Date().getTime()
+        node = $(@menu.data('effective-menu-new-html').replace(':new', "#{unique_id}", 'g'))
+
+        @menu.children('.actions').before(node)
+
+        CKEDITOR.instances[Object.keys(CKEDITOR.instances)[0]].openDialog 'effectiveMenusDialog', (dialog) ->
+          dialog.effective_menu_item = node
+
     initAdditionalEvents: ->
       @menu.on 'click', 'a', (event) -> event.preventDefault()
+
 
     initDragDropEvents: ->
       @menu.on 'dragenter', 'li', (event) =>
@@ -51,6 +67,7 @@
 
       @menu.on 'dragstart', 'li', (event) =>
         @draggable = node = $(event.currentTarget)
+        @menu.children('.actions').children('.add-node').hide()
         node.find('.open').removeClass('open')
 
         event.originalEvent.dataTransfer.setData('text/html', node[0].outerHTML)
@@ -121,6 +138,7 @@
 
       @menu.removeClass('dragging')
       @menu.find('.placeholder,.open').removeClass('placeholder').removeClass('open')
+      @menu.children('.actions').children('.add-node').show()
 
       @draggable = null
       @droppable = null
@@ -199,7 +217,7 @@ CKEDITOR.plugins.add 'effective_menus',
       {
         title: 'Effective Menu Item'
         minWidth: 350,
-        minHeight: 250,
+        minHeight: 200,
         contents: [
           {
             id: 'item',
@@ -310,10 +328,18 @@ CKEDITOR.plugins.add 'effective_menus',
           }
         ], # /contents
 
-        onShow: -> this.setupContent(this.effective_menu_item)
+        onShow: ->
+          if this.effective_menu_item
+            this.setupContent(this.effective_menu_item)
+          else
+            this.getContentElement('item', 'source').setValue('Page')
+
         onOk: ->
           this.commitContent(this.effective_menu_item)
+          this.effective_menu_item.removeClass('new-item') if this.effective_menu_item.hasClass('new-item')
           this.effective_menu_item = undefined
+
         onCancel: ->
+          this.effective_menu_item.remove() if this.effective_menu_item.hasClass('new-item')
           this.effective_menu_item = undefined
       }

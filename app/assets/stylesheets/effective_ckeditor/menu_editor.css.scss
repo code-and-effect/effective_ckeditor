@@ -2,19 +2,29 @@
   cursor: move !important;
 
   li, a, * { cursor: move !important; }
-
+  .remove-node { display: inline-block; }
 }
 
 .effective-menu {
+  position: relative;
+
   border: 1px dotted #4195fc;
 
   li.divider {
     height: 3px;
   }
 
-  .menu-item {
-    display: none;
+  > .actions {
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    top: 0;
   }
+
+  .add-node { display: none; }
+  .remove-node { display: none; }
+
+  .menu-item { display: none; }
 }
 
 // Top level placeholder
