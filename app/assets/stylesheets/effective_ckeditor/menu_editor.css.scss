@@ -7,8 +7,10 @@
 
 .effective-menu {
   position: relative;
-
   border: 1px dotted #4195fc;
+
+  min-width: 30px;
+  min-height: 30px;
 
   li.divider {
     height: 3px;
@@ -19,6 +21,9 @@
     position: absolute;
     right: 0;
     top: 0;
+    font-size: 14px;
+
+    .large { font-size: 20px; }
   }
 
   .add-node { display: none; }

@@ -1,4 +1,7 @@
 # OKAY THE TOP OF THIS IS A JQUERY PLUGIN
+# When the CKEditor plugin below is initialized via an /edit/ route
+# it initialized this jquery on any $(.effective-menu) objects present on the page
+
 (($, window) ->
   class EffectiveMenuEditor
     defaults:
@@ -14,7 +17,8 @@
       @menu = $(el)
 
       @initCkEditorEvents()
-      @initAddRemoveEvents()
+      @initAddEvents()
+      @initRemoveEvents()
       @initDragDropEvents()
       @initAdditionalEvents()
       true
@@ -38,9 +42,11 @@
         CKEDITOR.instances[Object.keys(CKEDITOR.instances)[0]].openDialog 'effectiveMenusDialog', (dialog) ->
           dialog.effective_menu_item = $(event.currentTarget)
 
-    initAddRemoveEvents: ->
-      @menu.on 'mouseover', (event) => @menu.children('.actions').children('.add-node').show()
-      @menu.on 'mouseout', (event) => @menu.children('.actions').children('.add-node').hide()
+    initAddEvents: ->
+      @menu.on 'mouseenter', (event) => @menu.children('.actions').children('.add-node').show()
+      @menu.on 'mouseleave', (event) => @menu.children('.actions').children('.add-node').hide()
+      @menu.on 'mouseenter', '.add-node', (event) -> $(event.currentTarget).addClass('large') ; event.stopPropagation()
+      @menu.on 'mouseleave', '.add-node', (event) -> $(event.currentTarget).removeClass('large'); event.stopPropagation()
 
       @menu.on 'click', '.add-node', (event) =>
         event.preventDefault()
@@ -52,9 +58,29 @@
         CKEDITOR.instances[Object.keys(CKEDITOR.instances)[0]].openDialog 'effectiveMenusDialog', (dialog) ->
           dialog.effective_menu_item = node
 
+    initRemoveEvents: ->
+      @menu.on 'dragenter', '.remove-node', (event) => $(event.currentTarget).addClass('large')
+      @menu.on 'dragleave', '.remove-node', (event) => $(event.currentTarget).removeClass('large')
+
+      @menu.on 'dragover', '.remove-node', (event) =>
+        return false unless @draggable
+        glyphicon = $(event.currentTarget).addClass('large') # Garbage can
+
+        event.preventDefault() # Enable drag and drop
+        event.stopPropagation()
+
+      @menu.on 'drop', '.remove-node', (event) =>
+        return false unless @draggable
+        glyphicon = $(event.currentTarget).removeClass('large')
+
+        @markDestroyed(@draggable)
+
+        @cleanupAfterDrop()
+        event.stopPropagation()
+        event.preventDefault()
+
     initAdditionalEvents: ->
       @menu.on 'click', 'a', (event) -> event.preventDefault()
-
 
     initDragDropEvents: ->
       @menu.on 'dragenter', 'li', (event) =>
@@ -127,9 +153,11 @@
       node.parentsUntil(@menu, 'li.dropdown').addClass('open')
 
     cleanupAfterDrop: ->
+      # chrome puts in a weird meta tag that firefox doesnt
+      # so we delete it here
       @menu.find('meta,li.effective-menu-expand').remove()
 
-      # Convert empty dropdowns back to leafs
+      # Convert any empty dropdowns back we converted back to leafs
       @menu.find('.dropdown-menu:empty').each (index, item) ->
         node = $(item).closest('.dropdown')
         node.removeClass('dropdown').removeClass('open')
@@ -143,8 +171,19 @@
       @draggable = null
       @droppable = null
 
-    serialize: (retval) ->
+    markDestroyed: (node) ->
+      node.hide().addClass('destroyed').find("input[name$='[_destroy]']").val(1)
+      @menu.children('.actions').after(node.remove())
 
+
+    # This method is called with a Hash value
+    # that is called by reference from the parent function
+    #
+    # This serialize method is called from the effective_ckeditor gem plugins/effective_regions plugin
+    # by the SaveAll method to actually persist the menus when it also saves the regions
+    # This way the saves happen all at once
+
+    serialize: (retval) ->
       # console.log "============ BEFORE =============="
       # @menu.find('li').each (index, item) =>
       #   item = $(item)
@@ -167,6 +206,9 @@
 
       items = {}
 
+      # This next bit just massages some of the form serialization
+      # and translates the jquery serializeArray into the formnat needed by Rails accepts_nested_attributes
+
       $.each @menu.find('input').serializeArray(), ->
         @name = @name.replace("effective_menu[menu_items_attributes]", "menu_items_attributes")
 
@@ -176,15 +218,16 @@
         else
           items[@name] = (@value || '')
 
+      # This retVal has to account for multiple effective-menus on one page
       retval[@menu.data('effective-menu-id')] = items
 
     assignLftRgt: (parent, lft) ->
       rgt = lft + 1
 
-      parent.children('.dropdown-menu').children('li').each (_, child) =>
+      parent.children('.dropdown-menu').children('li:not(.destroyed)').each (_, child) =>
         rgt = @assignLftRgt($(child), rgt)
 
-      parent.children('li').each (_, child) =>
+      parent.children('li:not(.destroyed)').each (_, child) =>
         rgt = @assignLftRgt($(child), rgt)
 
       parent.children('.menu-item').children("input[name$='[lft]']").val(lft)
@@ -207,9 +250,12 @@
 
 # AND THE REST IS A CKEDITOR PLUGIN
 
+# This plugin is registered with CkEditor and a dialog to edit menu item is created
+# See the initCkEditorEvents() function in the jquery plugin that calls this dialog
+# When the dialog is called, it sets dialog.effective_menu_item to
+# to the event.currentTarget, i.e. the jquery element $(li)
+
 CKEDITOR.plugins.add 'effective_menus',
-
-
   init: (editor) ->
     $('.effective-menu').effectiveMenuEditor() # Initialize the EffectiveMenus
 
@@ -328,11 +374,7 @@ CKEDITOR.plugins.add 'effective_menus',
           }
         ], # /contents
 
-        onShow: ->
-          if this.effective_menu_item
-            this.setupContent(this.effective_menu_item)
-          else
-            this.getContentElement('item', 'source').setValue('Page')
+        onShow: -> this.setupContent(this.effective_menu_item) if this.effective_menu_item
 
         onOk: ->
           this.commitContent(this.effective_menu_item)
