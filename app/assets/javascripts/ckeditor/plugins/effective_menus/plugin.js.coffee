@@ -146,10 +146,9 @@
       item.addClass('dropdown')
       item.children('a').attr('data-toggle', 'dropdown')
 
-      # # If I'm a top level dropdown
-      # if item.parent().hasClass('effective-menu')
-      #   item.childre('a').append("<span class='caret'>")
-
+      # If I'm a top level dropdown
+      if item.parent().hasClass('effective-menu')
+        item.children('a').append("<span class='caret'>")
 
       @menu.find('.open').removeClass('open')
       item.parentsUntil(@menu, 'li.dropdown').addClass('open')
@@ -163,7 +162,7 @@
       @menu.find('.dropdown-menu:empty').each (index, item) ->
         item = $(item).closest('.dropdown')
         item.removeClass('dropdown').removeClass('open')
-        item.children('a').removeAttr('data-toggle')
+        item.children('a').removeAttr('data-toggle').find('span.caret').remove()
         item.children('.dropdown-menu').remove()
 
       @menu.removeClass('dragging')
