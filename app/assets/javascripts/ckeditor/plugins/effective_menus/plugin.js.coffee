@@ -6,7 +6,7 @@
   class EffectiveMenuEditor
     defaults:
       menuClass: 'effective-menu'
-      expandThreshold: 600
+      expandThreshold: 600  # Seconds before a leaf li node will be auto-expanded into a dropdown
 
     menu: null
     draggable: null
@@ -17,32 +17,26 @@
       @menu = $(el)
 
       @initCkEditorEvents()
-      @initAddEvents()
-      @initRemoveEvents()
+      @initAddButtonEvents()
+      @initDestroyButtonEvents()
       @initDragDropEvents()
       @initAdditionalEvents()
       true
 
+    # All 3 of these events are basically the same:
+    # Remove the open class and
+
     initCkEditorEvents: ->
-      @menu.on 'click', 'li.dropdown.open', (event) =>
+      # Oh yea, you like that selector.  The comma means or, so there are actually 3 selectors being created here
+      # They need to be in this order for the stopPropagation to work properly.
+      @menu.on 'click', 'li.dropdown.open,.dropdown-menu > li.dropdown,li:not(.dropdown)', (event) =>
         event.stopPropagation()
         @menu.find('.open').removeClass('open')
+        # Open the CKEDITOR dialog and pass the source effective_menu_item $('li') to the dialog
         CKEDITOR.instances[Object.keys(CKEDITOR.instances)[0]].openDialog 'effectiveMenusDialog', (dialog) ->
           dialog.effective_menu_item = $(event.currentTarget)
 
-      @menu.on 'click', '.dropdown-menu > li.dropdown', (event) =>
-        event.stopPropagation()
-        @menu.find('.open').removeClass('open')
-        CKEDITOR.instances[Object.keys(CKEDITOR.instances)[0]].openDialog 'effectiveMenusDialog', (dialog) ->
-          dialog.effective_menu_item = $(event.currentTarget)
-
-      @menu.on 'click', 'li:not(.dropdown)', (event) =>
-        event.stopPropagation()
-        @menu.find('.open').removeClass('open')
-        CKEDITOR.instances[Object.keys(CKEDITOR.instances)[0]].openDialog 'effectiveMenusDialog', (dialog) ->
-          dialog.effective_menu_item = $(event.currentTarget)
-
-    initAddEvents: ->
+    initAddButtonEvents: ->
       @menu.on 'mouseenter', (event) => @menu.children('.actions').children('.add-node').show()
       @menu.on 'mouseleave', (event) => @menu.children('.actions').children('.add-node').hide()
       @menu.on 'mouseenter', '.add-node', (event) -> $(event.currentTarget).addClass('large') ; event.stopPropagation()
@@ -58,7 +52,7 @@
         CKEDITOR.instances[Object.keys(CKEDITOR.instances)[0]].openDialog 'effectiveMenusDialog', (dialog) ->
           dialog.effective_menu_item = node
 
-    initRemoveEvents: ->
+    initDestroyButtonEvents: ->
       @menu.on 'dragenter', '.remove-node', (event) => $(event.currentTarget).addClass('large')
       @menu.on 'dragleave', '.remove-node', (event) => $(event.currentTarget).removeClass('large')
 
@@ -113,7 +107,7 @@
           node.parentsUntil(@menu, 'li').andSelf().addClass('open')
         else
           event.preventDefault() # Enable drag and drop
-          @convertToDropdown(node) if @droppable.time? && ((new Date().getTime()) - @droppable.time) > @options.expandThreshold
+          @expandToDropdown(node) if @droppable.time? && ((new Date().getTime()) - @droppable.time) > @options.expandThreshold
 
         # If I don't have the placeholder class already
         if node.hasClass('placeholder') == false
@@ -142,7 +136,10 @@
         event.stopPropagation()
         event.preventDefault()
 
-    convertToDropdown: (node) ->
+    # If it hasn't already been expanded...
+    # Append some html to make it into a faux dropdown
+    # which is just a ul.dropdown-menu > li
+    expandToDropdown: (node) ->
       return false if node.hasClass('dropdown') || node.hasClass('effective-menu-expand')
 
       node.append(@menu.data('effective-menu-expand-html'))
@@ -171,6 +168,9 @@
       @draggable = null
       @droppable = null
 
+    # Just pass _destroyed = 1 back to rails to delete this node
+    # Rails seems to disregard new nodes set to the new Date.now() values anyhow
+    # Put all deleted nodes after the .actions div just to be tidy
     markDestroyed: (node) ->
       node.hide().addClass('destroyed').find("input[name$='[_destroy]']").val(1)
       @menu.children('.actions').after(node.remove())
@@ -269,6 +269,17 @@ CKEDITOR.plugins.add 'effective_menus',
             id: 'item',
             label: 'Menu Item'
             elements: [
+              {
+                id: 'add_or_edit',
+                type: 'html',
+                html: '',
+                setup: (element) ->
+                  # This just doesnt work and Im not sure why
+                  if this.getDialog().effective_menu_item.hasClass('new-item')
+                    this.setValue('<p>Create a new menu item</p>')
+                  else
+                    this.setValue('<p>Editing an existing menu item</p>')
+              },
               {
                 id: 'title',
                 type: 'text',
