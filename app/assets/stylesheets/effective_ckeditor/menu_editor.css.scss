@@ -1,15 +1,17 @@
 .effective-menu.dragging, {
-  cursor: move !important;
-
+  cursor: move !important;  // I'm having trouble getting the cursor working
   li, a, * { cursor: move !important; }
-  .remove-node { display: inline-block; }
+
+  > .actions {
+    .remove-item { display: inline-block; }
+  }
 }
 
 .effective-menu {
   position: relative;
-  border: 1px dotted #4195fc;
+  border: 1px dotted #4195fc; // Match the effective_regions editable border color
 
-  min-width: 30px;
+  min-width: 30px; // What to do with an empty menu...
   min-height: 30px;
 
   li.divider {
@@ -23,14 +25,16 @@
     top: 0;
     font-size: 14px;
 
+    .add-item { display: none; }  // Bootstrap3 glyphicon
+    .remove-item { display: none; } // Bootstrap3 glyphicon
+
     .large { font-size: 20px; }
   }
 
-  .add-node { display: none; }
-  .remove-node { display: none; }
-
-  .menu-item { display: none; }
+  .menu-item { display: none; } // under each li, Contains the form controls. Nothing to view here
 }
+
+// These placeholders might have to be adjusted based on vertical horizontal
 
 // Top level placeholder
 ul.nav.effective-menu > li.placeholder {

@@ -6,7 +6,7 @@
   class EffectiveMenuEditor
     defaults:
       menuClass: 'effective-menu'
-      expandThreshold: 600  # Seconds before a leaf li node will be auto-expanded into a dropdown
+      expandThreshold: 600  # Seconds before a leaf li item will be auto-expanded into a dropdown
 
     menu: null
     draggable: null
@@ -37,33 +37,33 @@
           dialog.effective_menu_item = $(event.currentTarget)
 
     initAddButtonEvents: ->
-      @menu.on 'mouseenter', (event) => @menu.children('.actions').children('.add-node').show()
-      @menu.on 'mouseleave', (event) => @menu.children('.actions').children('.add-node').hide()
-      @menu.on 'mouseenter', '.add-node', (event) -> $(event.currentTarget).addClass('large') ; event.stopPropagation()
-      @menu.on 'mouseleave', '.add-node', (event) -> $(event.currentTarget).removeClass('large'); event.stopPropagation()
+      @menu.on 'mouseenter', (event) => @menu.children('.actions').children('.add-item').show()
+      @menu.on 'mouseleave', (event) => @menu.children('.actions').children('.add-item').hide()
+      @menu.on 'mouseenter', '.add-item', (event) -> $(event.currentTarget).addClass('large') ; event.stopPropagation()
+      @menu.on 'mouseleave', '.add-item', (event) -> $(event.currentTarget).removeClass('large'); event.stopPropagation()
 
-      @menu.on 'click', '.add-node', (event) =>
+      @menu.on 'click', '.add-item', (event) =>
         event.preventDefault()
         unique_id = new Date().getTime()
-        node = $(@menu.data('effective-menu-new-html').replace(':new', "#{unique_id}", 'g'))
+        item = $(@menu.data('effective-menu-new-html').replace(':new', "#{unique_id}", 'g'))
 
-        @menu.children('.actions').before(node)
+        @menu.children('.actions').before(item)
 
         CKEDITOR.instances[Object.keys(CKEDITOR.instances)[0]].openDialog 'effectiveMenusDialog', (dialog) ->
-          dialog.effective_menu_item = node
+          dialog.effective_menu_item = item
 
     initDestroyButtonEvents: ->
-      @menu.on 'dragenter', '.remove-node', (event) => $(event.currentTarget).addClass('large')
-      @menu.on 'dragleave', '.remove-node', (event) => $(event.currentTarget).removeClass('large')
+      @menu.on 'dragenter', '.remove-item', (event) => $(event.currentTarget).addClass('large')
+      @menu.on 'dragleave', '.remove-item', (event) => $(event.currentTarget).removeClass('large')
 
-      @menu.on 'dragover', '.remove-node', (event) =>
+      @menu.on 'dragover', '.remove-item', (event) =>
         return false unless @draggable
         glyphicon = $(event.currentTarget).addClass('large') # Garbage can
 
         event.preventDefault() # Enable drag and drop
         event.stopPropagation()
 
-      @menu.on 'drop', '.remove-node', (event) =>
+      @menu.on 'drop', '.remove-item', (event) =>
         return false unless @draggable
         glyphicon = $(event.currentTarget).removeClass('large')
 
@@ -86,52 +86,52 @@
         event.preventDefault() if @draggable # enable drag and drop
 
       @menu.on 'dragstart', 'li', (event) =>
-        @draggable = node = $(event.currentTarget)
-        @menu.children('.actions').children('.add-node').hide()
-        node.find('.open').removeClass('open')
+        @draggable = item = $(event.currentTarget)
+        @menu.children('.actions').children('.add-item').hide()
+        item.find('.open').removeClass('open')
 
-        event.originalEvent.dataTransfer.setData('text/html', node[0].outerHTML)
+        event.originalEvent.dataTransfer.setData('text/html', item[0].outerHTML)
 
-        node.css('opacity', '0.4') # Show it slightly removed from the DOM
+        item.css('opacity', '0.4') # Show it slightly removed from the DOM
         @menu.addClass('dragging')
         event.stopPropagation()
 
       @menu.on 'dragover', 'li', (event) =>
-        node = $(event.currentTarget)
+        item = $(event.currentTarget)
 
         return false unless @draggable
-        return false if @draggable.find(node).length > 0 # Don't drag a parent into a child
+        return false if @draggable.find(item).length > 0 # Don't drag a parent into a child
 
-        if node.hasClass('dropdown') && !node.hasClass('open') # This is a menu, expand it
+        if item.hasClass('dropdown') && !item.hasClass('open') # This is a menu, expand it
           @menu.find('.open').removeClass('open')
-          node.parentsUntil(@menu, 'li').andSelf().addClass('open')
+          item.parentsUntil(@menu, 'li').andSelf().addClass('open')
         else
           event.preventDefault() # Enable drag and drop
-          @expandToDropdown(node) if @droppable.time? && ((new Date().getTime()) - @droppable.time) > @options.expandThreshold
+          @expandToDropdown(item) if @droppable.time? && ((new Date().getTime()) - @droppable.time) > @options.expandThreshold
 
         # If I don't have the placeholder class already
-        if node.hasClass('placeholder') == false
+        if item.hasClass('placeholder') == false
           @menu.find('.placeholder').removeClass('placeholder')
-          node.addClass('placeholder')
+          item.addClass('placeholder')
 
         event.stopPropagation()
 
       @menu.on 'dragend', 'li', (event) =>
         return false unless @draggable
-        node = $(event.currentTarget)
+        item = $(event.currentTarget)
 
         @cleanupAfterDrop()
-        node.css('opacity', '1.0')
+        item.css('opacity', '1.0')
 
       @menu.on 'drop', 'li', (event) =>
         return false unless @draggable
-        node = $(event.currentTarget)
+        item = $(event.currentTarget)
 
-        node.before(event.originalEvent.dataTransfer.getData('text/html'))
+        item.before(event.originalEvent.dataTransfer.getData('text/html'))
         @draggable.remove()
 
         @cleanupAfterDrop()
-        node.parentsUntil(@menu, 'li.dropdown').addClass('open')
+        item.parentsUntil(@menu, 'li.dropdown').addClass('open')
 
         event.stopPropagation()
         event.preventDefault()
@@ -139,15 +139,20 @@
     # If it hasn't already been expanded...
     # Append some html to make it into a faux dropdown
     # which is just a ul.dropdown-menu > li
-    expandToDropdown: (node) ->
-      return false if node.hasClass('dropdown') || node.hasClass('effective-menu-expand')
+    expandToDropdown: (item) ->
+      return false if item.hasClass('dropdown') || item.hasClass('effective-menu-expand')
 
-      node.append(@menu.data('effective-menu-expand-html'))
-      node.addClass('dropdown')
-      node.children('a').attr('data-toggle', 'dropdown')
+      item.append(@menu.data('effective-menu-expand-html'))
+      item.addClass('dropdown')
+      item.children('a').attr('data-toggle', 'dropdown')
+
+      # # If I'm a top level dropdown
+      # if item.parent().hasClass('effective-menu')
+      #   item.childre('a').append("<span class='caret'>")
+
 
       @menu.find('.open').removeClass('open')
-      node.parentsUntil(@menu, 'li.dropdown').addClass('open')
+      item.parentsUntil(@menu, 'li.dropdown').addClass('open')
 
     cleanupAfterDrop: ->
       # chrome puts in a weird meta tag that firefox doesnt
@@ -156,24 +161,24 @@
 
       # Convert any empty dropdowns back we converted back to leafs
       @menu.find('.dropdown-menu:empty').each (index, item) ->
-        node = $(item).closest('.dropdown')
-        node.removeClass('dropdown').removeClass('open')
-        node.children('a').removeAttr('data-toggle')
-        node.children('.dropdown-menu').remove()
+        item = $(item).closest('.dropdown')
+        item.removeClass('dropdown').removeClass('open')
+        item.children('a').removeAttr('data-toggle')
+        item.children('.dropdown-menu').remove()
 
       @menu.removeClass('dragging')
       @menu.find('.placeholder,.open').removeClass('placeholder').removeClass('open')
-      @menu.children('.actions').children('.add-node').show()
+      @menu.children('.actions').children('.add-item').show()
 
       @draggable = null
       @droppable = null
 
-    # Just pass _destroyed = 1 back to rails to delete this node
-    # Rails seems to disregard new nodes set to the new Date.now() values anyhow
-    # Put all deleted nodes after the .actions div just to be tidy
-    markDestroyed: (node) ->
-      node.hide().addClass('destroyed').find("input[name$='[_destroy]']").val(1)
-      @menu.children('.actions').after(node.remove())
+    # Just pass _destroyed = 1 back to rails to delete this item
+    # Rails seems to disregard new items set to the new Date.now() values anyhow
+    # Put all deleted items after the .actions div just to be tidy
+    markDestroyed: (item) ->
+      item.hide().addClass('destroyed').find("input[name$='[_destroy]']").val(1)
+      @menu.children('.actions').after(item.remove())
 
 
     # This method is called with a Hash value
@@ -301,8 +306,8 @@ CKEDITOR.plugins.add 'effective_menus',
                     label: 'Link Source',
                     items: [['Page', 'Page'], ['URL', 'URL']]
                     setup: (element) ->
-                      menuable_id = element.children('.menu-item').children("input[name$='[menuable_id]']").val() || ''
-                      if menuable_id.length > 0 then this.setValue('Page') else this.setValue('URL')
+                      url = element.children('.menu-item').children("input[name$='[url]']").val() || ''
+                      if (url.length > 0 && url != '#') then this.setValue('URL') else this.setValue('Page')
                     onChange: (event) ->
                       if this.getValue() == 'Page'
                         this.getDialog().getContentElement('item', 'menuable_id').getElement().show()
