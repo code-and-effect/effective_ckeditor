@@ -6,7 +6,7 @@
   class EffectiveMenuEditor
     defaults:
       menuClass: 'effective-menu'
-      expandThreshold: 600  # Seconds before a leaf li item will be auto-expanded into a dropdown
+      expandThreshold: 100  # Seconds before a leaf li item will be auto-expanded into a dropdown
 
     menu: null
     draggable: null
@@ -69,7 +69,7 @@
 
         @markDestroyed(@draggable)
 
-        @cleanupAfterDrop()
+        @cleanupMenuAfterDrop()
         event.stopPropagation()
         event.preventDefault()
 
@@ -119,7 +119,7 @@
         return false unless @draggable
         item = $(event.currentTarget)
 
-        @cleanupAfterDrop()
+        @cleanupMenuAfterDrop()
         item.css('opacity', '1.0')
 
       @menu.on 'drop', 'li', (event) =>
@@ -128,11 +128,13 @@
         # Don't allow to drop into myself or my own children
         return false if !@draggable? || @draggable.is(item) || @draggable.find(item).length > 0
 
-        item.before(event.originalEvent.dataTransfer.getData('text/html'))
+        new_item = $(event.originalEvent.dataTransfer.getData('text/html'))
+
+        item.before(new_item)
         @draggable.remove()
 
-        @cleanupAfterDrop()
-        item.parentsUntil(@menu, 'li.dropdown').addClass('open')
+        @cleanupMenuAfterDrop()
+        @cleanupItemAfterDrop(new_item)
 
         event.stopPropagation()
         event.preventDefault()
@@ -154,12 +156,12 @@
       @menu.find('.open').removeClass('open')
       item.parentsUntil(@menu, 'li.dropdown').addClass('open')
 
-    cleanupAfterDrop: ->
+    cleanupMenuAfterDrop: ->
       # chrome puts in a weird meta tag that firefox doesnt
       # so we delete it here
       @menu.find('meta,li.effective-menu-expand').remove()
 
-      # Convert any empty dropdowns back we converted back to leafs
+      # Collapse any empty dropdowns we may have expanded back to leafs
       @menu.find('.dropdown-menu:empty').each (index, item) ->
         item = $(item).closest('.dropdown')
         item.removeClass('dropdown').removeClass('open')
@@ -167,11 +169,21 @@
         item.children('.dropdown-menu').remove()
 
       @menu.removeClass('dragging')
-      @menu.find('.placeholder,.open').removeClass('placeholder').removeClass('open')
       @menu.children('.actions').children('.add-item').show()
+      @menu.find('.placeholder,.open').removeClass('placeholder').removeClass('open')
 
       @draggable = null
       @droppable = null
+
+    cleanupItemAfterDrop: (item) ->
+      item.children('a').find('span.caret').remove() # Just always remove the caret if present
+
+      # And add it back if we're a top level node
+      if item.parent().hasClass('effective-menu') && item.children('.dropdown-menu').length
+        item.children('a').append("<span class='caret'>")
+
+      item.parentsUntil(@menu, 'li.dropdown').addClass('open')
+
 
     # Just pass _destroyed = 1 back to rails to delete this item
     # Rails seems to disregard new items set to the new Date.now() values anyhow
