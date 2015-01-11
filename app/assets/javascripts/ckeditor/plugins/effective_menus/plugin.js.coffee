@@ -88,7 +88,7 @@
       @menu.on 'dragstart', 'li', (event) =>
         @draggable = item = $(event.currentTarget)
         @menu.children('.actions').children('.add-item').hide()
-        item.find('.open').removeClass('open')
+        item.removeClass('open').find('.open').removeClass('open')
 
         event.originalEvent.dataTransfer.setData('text/html', item[0].outerHTML)
 
@@ -97,10 +97,9 @@
         event.stopPropagation()
 
       @menu.on 'dragover', 'li', (event) =>
-        item = $(event.currentTarget)
-
         return false unless @draggable
-        return false if @draggable.find(item).length > 0 # Don't drag a parent into a child
+
+        item = $(event.currentTarget)
 
         if item.hasClass('dropdown') && !item.hasClass('open') # This is a menu, expand it
           @menu.find('.open').removeClass('open')
@@ -124,8 +123,10 @@
         item.css('opacity', '1.0')
 
       @menu.on 'drop', 'li', (event) =>
-        return false unless @draggable
         item = $(event.currentTarget)
+
+        # Don't allow to drop into myself or my own children
+        return false if !@draggable? || @draggable.is(item) || @draggable.find(item).length > 0
 
         item.before(event.originalEvent.dataTransfer.getData('text/html'))
         @draggable.remove()
