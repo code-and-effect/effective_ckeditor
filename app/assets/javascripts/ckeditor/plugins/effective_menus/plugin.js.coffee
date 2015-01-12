@@ -151,7 +151,7 @@
 
       # If I'm a top level dropdown
       if item.parent().hasClass('effective-menu')
-        item.children('a').append("<span class='caret'>")
+        item.children('a').append("<span class='caret'></span>")
 
       @menu.find('.open').removeClass('open')
       item.parentsUntil(@menu, 'li.dropdown').addClass('open')
@@ -180,7 +180,7 @@
 
       # And add it back if we're a top level node
       if item.parent().hasClass('effective-menu') && item.children('.dropdown-menu').length
-        item.children('a').append("<span class='caret'>")
+        item.children('a').append("<span class='caret'></span>")
 
       item.parentsUntil(@menu, 'li.dropdown').addClass('open')
 
@@ -306,7 +306,13 @@ CKEDITOR.plugins.add 'effective_menus',
                   this.setValue(element.children('.menu-item').children("input[name$='[title]']").val())
                 commit: (element) ->
                   element.children('.menu-item').children("input[name$='[title]']").val(this.getValue())
-                  element.children('a').text(this.getValue())
+
+                  if element.children('a').find('span.caret').length > 0
+                    element.children('a').text(this.getValue())
+                    element.children('a').append("<span class='caret'></span>")
+                  else
+                    element.children('a').text(this.getValue())
+
               },
               {type: 'html', html: '<br>'},
               {
