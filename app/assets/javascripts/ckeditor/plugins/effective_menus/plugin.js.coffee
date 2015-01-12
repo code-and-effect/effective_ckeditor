@@ -7,6 +7,7 @@
     defaults:
       menuClass: 'effective-menu'
       expandThreshold: 250  # Seconds before a leaf li item will be auto-expanded into a dropdown
+      maxDepth: 2
 
     menu: null
     draggable: null
@@ -106,7 +107,7 @@
           item.parentsUntil(@menu, 'li').andSelf().addClass('open')
         else
           event.preventDefault() # Enable drag and drop
-          @expandToDropdown(item) if @droppable.time? && ((new Date().getTime()) - @droppable.time) > @options.expandThreshold
+          @expandToDropdown(item) if (new Date().getTime()) > @options.expandThreshold + (@droppable.time || 0)
 
         # If I don't have the placeholder class already
         if item.hasClass('placeholder') == false
@@ -144,6 +145,7 @@
     # which is just a ul.dropdown-menu > li
     expandToDropdown: (item) ->
       return false if item.hasClass('dropdown') || item.hasClass('effective-menu-expand')
+      return false if @depthOf(item) >= @options.maxDepth
 
       item.append(@menu.data('effective-menu-expand-html'))
       item.addClass('dropdown')
@@ -184,6 +186,9 @@
 
       item.parentsUntil(@menu, 'li.dropdown').addClass('open')
 
+    # Very top level items are assigned Depth of 0
+    # The first dropdowns all have Depth of 1
+    depthOf: (item) -> item.parentsUntil(@menu, 'li').length
 
     # Just pass _destroyed = 1 back to rails to delete this item
     # Rails seems to disregard new items set to the new Date.now() values anyhow
