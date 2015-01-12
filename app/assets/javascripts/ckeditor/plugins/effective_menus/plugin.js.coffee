@@ -6,7 +6,7 @@
   class EffectiveMenuEditor
     defaults:
       menuClass: 'effective-menu'
-      expandThreshold: 100  # Seconds before a leaf li item will be auto-expanded into a dropdown
+      expandThreshold: 250  # Seconds before a leaf li item will be auto-expanded into a dropdown
 
     menu: null
     draggable: null
