@@ -438,6 +438,25 @@ CKEDITOR.plugins.add 'effective_menus',
             ] # /tab1 elements
           },
           {
+            id: 'permissions',
+            label: 'Permissions',
+            elements: [
+              {
+                id: 'roles_mask',
+                type: 'checkbox',
+                label: 'Only visible to logged in users',
+                setup: (element) ->
+                  value = element.children('.menu-item').children("input[name$='[roles_mask]']").val()
+                  if value == '0' then this.setValue(true) else this.setValue(false)
+                commit: (element) ->
+                  if this.getValue() == true
+                    element.children('.menu-item').children("input[name$='[roles_mask]']").val(0)
+                  else
+                    element.children('.menu-item').children("input[name$='[roles_mask]']").val('')
+              }
+            ]
+          },
+          {
             id: 'advanced',
             label: 'Advanced'
             elements: [
