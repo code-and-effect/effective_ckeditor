@@ -197,7 +197,6 @@
       item.hide().addClass('destroyed').find("input[name$='[_destroy]']").val(1)
       @menu.children('.actions').after(item.remove())
 
-
     # This method is called with a Hash value
     # that is called by reference from the parent function
     #
@@ -317,31 +316,59 @@ CKEDITOR.plugins.add 'effective_menus',
                     element.children('a').append("<span class='caret'></span>")
                   else
                     element.children('a').text(this.getValue())
-
+                validate: ->
+                  if this.getDialog().getValueOf('item', 'source') != 'Divider' && (this.getValue() || '').length == 0
+                    CKEDITOR.dialog.validate.notEmpty('please enter a title').apply(this)
               },
               {type: 'html', html: '<br>'},
               {
-                type: 'hbox',
-                children: [
-                  {
-                    id: 'source',
-                    type: 'radio',
-                    label: 'Link Source',
-                    items: [['Page', 'Page'], ['URL', 'URL']]
-                    setup: (element) ->
-                      url = element.children('.menu-item').children("input[name$='[url]']").val() || ''
-                      if (url.length > 0 && url != '#') then this.setValue('URL') else this.setValue('Page')
-                    onChange: (event) ->
-                      if this.getValue() == 'Page'
-                        this.getDialog().getContentElement('item', 'menuable_id').getElement().show()
-                        this.getDialog().getContentElement('item', 'url').getElement().hide()
+                id: 'source',
+                type: 'radio',
+                label: 'Link Type',
+                items: [['Page', 'Page'], ['URL', 'URL'], ['Route', 'Route'], ['Divider', 'Divider']]
+                setup: (element) ->
+                  menuable_id = element.children('.menu-item').children("input[name$='[menuable_id]']").val() || ''
+                  special = element.children('.menu-item').children("input[name$='[special]']").val() || ''
+                  url = element.children('.menu-item').children("input[name$='[url]']").val() || ''
 
-                      if this.getValue() == 'URL'
-                        this.getDialog().getContentElement('item', 'menuable_id').getElement().hide()
-                        this.getDialog().getContentElement('item', 'url').getElement().show()
-                  },
-                  {type: 'html', html: ''}
-                ]
+                  if menuable_id.length > 0
+                    this.setValue('Page')
+                  else if special == 'divider'
+                    this.setValue('Divider')
+                  else if special.length > 0
+                    this.setValue('Route')
+                  else if url.length > 0 && url != '#'
+                    this.setValue('URL')
+                  else
+                    this.setValue('Page')
+
+                onChange: (event) ->
+                  if this.getValue() == 'Page'
+                    this.getDialog().getContentElement('item', 'title').getElement().show()
+                    this.getDialog().getContentElement('item', 'menuable_id').getElement().show()
+
+                    this.getDialog().getContentElement('item', 'url').getElement().hide()
+                    this.getDialog().getContentElement('item', 'special').getElement().hide()
+
+                  if this.getValue() == 'URL'
+                    this.getDialog().getContentElement('item', 'title').getElement().show()
+                    this.getDialog().getContentElement('item', 'url').getElement().show()
+
+                    this.getDialog().getContentElement('item', 'menuable_id').getElement().hide()
+                    this.getDialog().getContentElement('item', 'special').getElement().hide()
+
+                  if this.getValue() == 'Divider'
+                    this.getDialog().getContentElement('item', 'url').getElement().hide()
+                    this.getDialog().getContentElement('item', 'title').getElement().hide()
+                    this.getDialog().getContentElement('item', 'menuable_id').getElement().hide()
+                    this.getDialog().getContentElement('item', 'special').getElement().hide()
+
+                  if this.getValue() == 'Route'
+                    this.getDialog().getContentElement('item', 'title').getElement().show()
+                    this.getDialog().getContentElement('item', 'special').getElement().show()
+
+                    this.getDialog().getContentElement('item', 'menuable_id').getElement().hide()
+                    this.getDialog().getContentElement('item', 'url').getElement().hide()
               },
               {
                 id: 'menuable_id',
@@ -383,6 +410,30 @@ CKEDITOR.plugins.add 'effective_menus',
                 validate: ->
                   if this.getElement().isVisible() && (this.getValue() || '').length == 0
                     CKEDITOR.dialog.validate.notEmpty('please enter a URL').apply(this)
+              },
+              {
+                id: 'special',
+                type: 'text',
+                label: 'Route',
+                setup: (element) ->
+                  this.setValue(element.children('.menu-item').children("input[name$='[special]']").val())
+                commit: (element) ->
+                  if this.getDialog().getValueOf('item', 'source') == 'Divider'
+                    element.children('.menu-item').children("input[name$='[special]']").val('divider')
+                    element.addClass('divider')
+                  else if this.getElement().isVisible()
+                    element.children('.menu-item').children("input[name$='[special]']").val(this.getValue())
+                    element.removeClass('divider')
+                  else
+                    element.children('.menu-item').children("input[name$='[special]']").val('')
+                    element.removeClass('divider')
+                validate: ->
+                  if this.getDialog().getValueOf('item', 'source') == 'Divider'
+                    if this.getDialog().effective_menu_item.hasClass('dropdown')
+                      CKEDITOR.dialog.validate.notEmpty('cannot convert existing dropdown menu to a Divider').apply(this)
+                  else if this.getElement().isVisible()
+                    if (this.getValue() || '').length == 0
+                      CKEDITOR.dialog.validate.notEmpty('please enter a route').apply(this)
               }
             ] # /tab1 elements
           },
