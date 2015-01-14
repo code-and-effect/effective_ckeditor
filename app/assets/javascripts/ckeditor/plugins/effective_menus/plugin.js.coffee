@@ -442,17 +442,51 @@ CKEDITOR.plugins.add 'effective_menus',
             label: 'Permissions',
             elements: [
               {
-                id: 'roles_mask',
+                id: 'signed_out',
                 type: 'checkbox',
-                label: 'Only visible to logged in users',
+                label: 'Only visible when signed out',
                 setup: (element) ->
                   value = element.children('.menu-item').children("input[name$='[roles_mask]']").val()
-                  if value == '0' then this.setValue(true) else this.setValue(false)
-                commit: (element) ->
+                  this.setValue(value == '-1')
+                onChange: (event) ->
                   if this.getValue() == true
+                    this.getDialog().setValueOf('permissions', 'signed_in', false)
+                    this.getDialog().setValueOf('permissions', 'roles_mask', '')
+              },
+              {
+                id: 'signed_in',
+                type: 'checkbox',
+                label: 'Only visible when signed in',
+                setup: (element) ->
+                  value = element.children('.menu-item').children("input[name$='[roles_mask]']").val()
+                  this.setValue(value.length > 0 && parseInt(value, 10) >= 0)
+                onChange: (event) ->
+                  if this.getValue() == true
+                    this.getDialog().setValueOf('permissions', 'signed_out', false)
+              },
+              {
+                id: 'roles_mask',
+                type: 'text',
+                label: 'Roles Mask',
+                setup: (element) ->
+                  value = parseInt(element.children('.menu-item').children("input[name$='[roles_mask]']").val(), 10)
+                  if value > 0 then this.setValue(value) else this.setValue('')
+                commit: (element) ->
+                  if ('' + this.getValue()).length > 0
+                    element.children('.menu-item').children("input[name$='[roles_mask]']").val(this.getValue())
+                  else if this.getDialog().getValueOf('permissions', 'signed_in') == true
                     element.children('.menu-item').children("input[name$='[roles_mask]']").val(0)
+                  else if this.getDialog().getValueOf('permissions', 'signed_out') == true
+                    element.children('.menu-item').children("input[name$='[roles_mask]']").val(-1)
                   else
                     element.children('.menu-item').children("input[name$='[roles_mask]']").val('')
+                onKeyup: (event) ->
+                  if ('' + this.getValue()).length > 0
+                    this.getDialog().setValueOf('permissions', 'signed_in', true)
+                    this.getDialog().setValueOf('permissions', 'signed_out', false)
+                validate: ->
+                  if ('' + this.getValue()).length > 0
+                    CKEDITOR.dialog.validate.integer('roles_mask must be an integer').apply(this)
               }
             ]
           },
