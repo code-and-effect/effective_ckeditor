@@ -7,15 +7,17 @@
     defaults:
       menuClass: 'effective-menu'
       expandThreshold: 250  # Seconds before a leaf li item will be auto-expanded into a dropdown
-      maxDepth: 2
+      maxDepth: 9999
 
     menu: null
     draggable: null
     droppable: null
 
     constructor: (el, options) ->
-      @options = $.extend({}, @defaults, options)
       @menu = $(el)
+
+      @options = $.extend({}, @defaults, options)
+      @options.maxDepth = @menu.data('effective-menu-maxdepth') if @menu.data('effective-menu-maxdepth')
 
       @initCkEditorEvents()
       @initAddButtonEvents()
