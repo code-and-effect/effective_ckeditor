@@ -420,13 +420,11 @@ CKEDITOR.plugins.add 'effective_menus',
                 commit: (element) ->
                   if this.getDialog().getValueOf('item', 'source') == 'Divider'
                     element.children('.menu-item').children("input[name$='[special]']").val('divider')
-                    element.addClass('divider')
                   else if this.getElement().isVisible()
                     element.children('.menu-item').children("input[name$='[special]']").val(this.getValue())
-                    element.removeClass('divider')
                   else
                     element.children('.menu-item').children("input[name$='[special]']").val('')
-                    element.removeClass('divider')
+                  # There is more stuff in the classes commit
                 validate: ->
                   if this.getDialog().getValueOf('item', 'source') == 'Divider'
                     if this.getDialog().effective_menu_item.hasClass('dropdown')
@@ -511,7 +509,20 @@ CKEDITOR.plugins.add 'effective_menus',
                 setup: (element) ->
                   this.setValue(element.children('.menu-item').children("input[name$='[classes]']").val())
                 commit: (element) ->
-                  element.children('.menu-item').children("input[name$='[classes]']").val(this.getValue())
+                  value = this.getValue()
+                  element.children('.menu-item').children("input[name$='[classes]']").val(value)
+
+                  dropdown = element.hasClass('dropdown')
+
+                  element.prop('class', value)
+
+                  # Put back classes we need
+                  element.addClass('dropdown') if dropdown
+
+                  if this.getDialog().getValueOf('item', 'source') == 'Divider'
+                    element.addClass('divider')
+                  else
+                    element.removeClass('divider')
               }
             ]
           }
