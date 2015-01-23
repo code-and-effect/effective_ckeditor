@@ -12,7 +12,7 @@
   min-width: 30px; // What to do with an empty menu...
   min-height: 30px;
 
-  li.divider { height: 3px; }
+  li.divider { min-height: 4px; min-width: 4px; }
   .menu-item { display: none; } // under each li, Contains the form controls. Nothing to view here
 
   // Sub-level placeholder

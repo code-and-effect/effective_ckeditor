@@ -422,6 +422,7 @@ CKEDITOR.plugins.add 'effective_menus',
                 commit: (element) ->
                   if this.getDialog().getValueOf('item', 'source') == 'Divider'
                     element.children('.menu-item').children("input[name$='[special]']").val('divider')
+                    element.children('a').html('')
                   else if this.getElement().isVisible()
                     element.children('.menu-item').children("input[name$='[special]']").val(this.getValue())
                   else
