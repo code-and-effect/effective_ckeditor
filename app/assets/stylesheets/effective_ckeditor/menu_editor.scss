@@ -1,7 +1,4 @@
-.effective-menu.dragging, {
-  cursor: move !important;  // I'm having trouble getting the cursor working
-  li, a, * { cursor: move !important; }
-
+.effective-menu.dragging {
   > .actions {
     .remove-item { display: inline-block; }
   }
@@ -9,6 +6,7 @@
 
 .effective-menu {
   position: relative;
+
   border: 1px dotted #4195fc; // Match the effective_regions editable border color
 
   min-width: 30px; // What to do with an empty menu...
