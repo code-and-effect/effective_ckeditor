@@ -63,6 +63,7 @@ SaveAll = {
 Exit = {
   exec: (editor) ->
     url = $.cookie('effective_regions_editting')
+    url ||= window.location.href.replace('?edit=true', '')
 
     if url != undefined && url.length > 0
       window.location = url
