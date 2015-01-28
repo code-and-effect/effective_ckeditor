@@ -22,6 +22,10 @@ span.cke_button__exit_label {
   display: inline;
 }
 
+.cke_show_blocks {
+  .show-block-adjust { padding-top: 0px !important; }
+}
+
 .effective-region {
   outline: none;
   display: inherit;
