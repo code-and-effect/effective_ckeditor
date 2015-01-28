@@ -134,7 +134,7 @@ Snippets = {
       $.ajax
         url: "/effective/snippet/#{widget.name}"
         type: 'GET'
-        data: {effective_regions: {name: widget.name, data: widget.data}}
+        data: {edit: true, effective_regions: {name: widget.name, data: widget.data}}
         async: false
         complete: (data) -> widget.element.setHtml(data.responseText)
 
