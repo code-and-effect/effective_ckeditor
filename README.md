@@ -12,7 +12,7 @@ Please see effective_regions (https://github.com/code-and-effect/effective_regio
 
 ## CKEditor
 
-This gem packages only the javascript parts of CKEditor and adds one exclusive plugin, effective_regions
+This gem packages only the javascript parts of CKEditor and some exclusive effective_* plugins
 
 ## License
 

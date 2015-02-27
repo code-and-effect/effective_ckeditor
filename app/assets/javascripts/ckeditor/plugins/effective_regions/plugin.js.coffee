@@ -56,6 +56,7 @@ SaveAll = {
       data: { effective_regions: regionData, effective_menus: menuData }
       async: false
       complete: (data) ->
+        $('.effective-menu').effectiveMenuEditor('saveComplete')
         if data.responseText == 'refresh'
           location.reload(true)
 }

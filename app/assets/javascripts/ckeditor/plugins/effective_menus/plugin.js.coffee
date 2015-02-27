@@ -196,7 +196,9 @@
     # Rails seems to disregard new items set to the new Date.now() values anyhow
     # Put all deleted items after the .actions div just to be tidy
     markDestroyed: (item) ->
-      item.hide().addClass('destroyed').find("input[name$='[_destroy]']").val(1)
+      item.hide().addClass('destroyed')
+      item.find('li').addClass('destroyed')
+      item.find("input[name$='[_destroy]']").val(1)
       @menu.children('.actions').after(item.remove())
 
     # This method is called with a Hash value
@@ -243,6 +245,9 @@
 
       # This retVal has to account for multiple effective-menus on one page
       retval[@menu.data('effective-menu-id')] = items
+
+    saveComplete: ->
+      @menu.find('.destroyed').remove()
 
     assignLftRgt: (parent, lft) ->
       rgt = lft + 1
