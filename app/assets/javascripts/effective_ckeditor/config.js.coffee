@@ -1,7 +1,7 @@
 CKEDITOR.editorConfig = (config) ->
   config.startupShowBorders = true
 
-  config.extraPlugins = 'effective_regions,effective_assets,effective_menus'
+  config.extraPlugins = 'effective_regions,effective_assets,effective_menus,footnotes'
   config.format_tags = 'p;h1;h2;h3;h4;h5;h6;pre;div'
 
   config.templates = 'effective_regions'
@@ -11,6 +11,8 @@ CKEDITOR.editorConfig = (config) ->
   config.filebrowserWindowHeight = 600
   config.filebrowserWindowWidth = 800
   config.filebrowserBrowseUrl = '/effective/assets?only=images'
+
+  config.footnotesEditorSelector = "'#' + editor.name"
 
   CKEDITOR.dtd.$removeEmpty['i'] = false
 
@@ -24,7 +26,7 @@ CKEDITOR.editorConfig = (config) ->
     '/',
     { name: 'definedstyles', items: ['Format'] },
     { name: 'links', items: ['Link', 'Unlink'] },
-    { name: 'insert', items: ['Image', 'tliyoutube', 'EffectiveAssets'] },
+    { name: 'insert', items: ['Image', 'tliyoutube', 'EffectiveAssets', 'Footnotes'] },
     { name: 'lists', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'] },
     { name: 'insert2', items: ['Table', 'HorizontalRule', 'Blockquote', 'PageBreak'] },
     { name: 'snippets', items: ['Templates', 'InsertSnippet'] }

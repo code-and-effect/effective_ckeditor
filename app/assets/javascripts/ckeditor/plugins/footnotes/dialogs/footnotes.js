@@ -51,7 +51,7 @@ CKEDITOR.dialog.add( 'footnotesDialog', function( editor ) {
 
                             editor = dialog.getParentEditor();
                             // Dynamically add existing footnotes:
-                            $footnotes = jQuery('#' + editor.id + '_contents iframe').contents().find('.footnotes ol');
+                            $footnotes = editor.plugins.footnotes.editorContents(editor).find('.footnotes ol');
                             $this = this;
 
                             if ($footnotes.length > 0) {

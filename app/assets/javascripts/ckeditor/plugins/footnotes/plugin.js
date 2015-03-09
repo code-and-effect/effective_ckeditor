@@ -123,6 +123,13 @@ CKEDITOR.plugins.add( 'footnotes', {
         CKEDITOR.dialog.add('footnotesDialog', this.path + 'dialogs/footnotes.js');
     },
 
+    editorContents: function(editor) {
+        if (editor.config.footnotesEditorSelector) {
+            return jQuery(eval(editor.config.footnotesEditorSelector)).contents()
+        } else {
+            return jQuery('#' + editor.id + '_contents iframe').contents().find('body');
+        }
+    },
 
     build: function(footnote, is_new, editor) {
         
@@ -174,7 +181,7 @@ CKEDITOR.plugins.add( 'footnotes', {
     },
 
     addFootnote: function(footnote, editor) {
-        $contents  = jQuery('#' + editor.id + '_contents iframe').contents().find('body');
+        $contents  = this.editorContents(editor);
         $footnotes = $contents.find('.footnotes');
 
         if ($footnotes.length == 0) {
@@ -203,7 +210,7 @@ CKEDITOR.plugins.add( 'footnotes', {
     reorderMarkers: function(editor) {
         editor.fire('lockSnapshot');
         var prefix  = editor.config.footnotesPrefix ? '-' + editor.config.footnotesPrefix : '';
-        $contents = jQuery('#' + editor.id + '_contents iframe').contents().find('body');
+        $contents = this.editorContents(editor);
         var data = {
             order: [],
             occurrences: {}
