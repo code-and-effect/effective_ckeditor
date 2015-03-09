@@ -1,5 +1,5 @@
 ﻿/**
- * @license Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2015, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or http://ckeditor.com/license
  */
 
@@ -13,10 +13,10 @@
  * (1) http://ckeditor.com/builder
  *     Visit online builder to build CKEditor from scratch.
  *
- * (2) http://ckeditor.com/builder/0d7a92044d3248629889f65b3c17068c
+ * (2) http://ckeditor.com/builder/6f3a471127697b0fcec36c6c243c9541
  *     Visit online builder to build CKEditor, starting with the same setup as before.
  *
- * (3) http://ckeditor.com/builder/download/0d7a92044d3248629889f65b3c17068c
+ * (3) http://ckeditor.com/builder/download/6f3a471127697b0fcec36c6c243c9541
  *     Straight download link to the latest version of CKEditor (Optimized) with the same setup as before.
  *
  * NOTE:
@@ -34,6 +34,7 @@ var CKBUILDER_CONFIG = {
 		'bender-out.log',
 		'dev',
 		'.DS_Store',
+		'.editorconfig',
 		'.gitattributes',
 		'.gitignore',
 		'gruntfile.js',
@@ -59,6 +60,7 @@ var CKBUILDER_CONFIG = {
 		'entities' : 1,
 		'filebrowser' : 1,
 		'find' : 1,
+		'floatingspace' : 1,
 		'format' : 1,
 		'horizontalrule' : 1,
 		'image' : 1,
@@ -90,7 +92,8 @@ var CKBUILDER_CONFIG = {
 		'templates' : 1,
 		'tliyoutube' : 1,
 		'toolbar' : 1,
-		'undo' : 1
+		'undo' : 1,
+		'wysiwygarea' : 1
 	},
 	languages : {
 		'en' : 1
