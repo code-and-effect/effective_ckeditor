@@ -55,10 +55,10 @@ SaveAll = {
       dataType: 'json'
       data: { effective_regions: regionData, effective_menus: menuData }
       async: false
-      complete: (data) ->
-        $('.effective-menu').effectiveMenuEditor('saveComplete')
-        if data.responseText == 'refresh'
-          location.reload(true)
+      complete: (response) ->
+        data = response['responseJSON'] || {}
+        $('.effective-menu').effectiveMenuEditor('saveComplete', data['effective_menus'])
+        location.reload(true) if data['refresh'] == true
 }
 
 Exit = {
