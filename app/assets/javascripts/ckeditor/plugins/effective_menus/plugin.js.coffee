@@ -48,7 +48,7 @@
       @menu.on 'click', '.add-item', (event) =>
         event.preventDefault()
         unique_id = new Date().getTime()
-        item = $(@menu.data('effective-menu-new-html').replace(':new', "#{unique_id}", 'g'))
+        item = $(@menu.data('effective-menu-new-html').replace(/:new/g, "#{unique_id}"))
 
         @menu.children('.actions').before(item)
 
