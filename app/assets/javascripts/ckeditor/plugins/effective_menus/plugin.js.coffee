@@ -35,6 +35,7 @@
       @menu.on 'click', 'li.dropdown.open,.dropdown-menu > li.dropdown,li:not(.dropdown)', (event) =>
         event.stopPropagation()
         @menu.find('.open').removeClass('open')
+        @menu.data('dirty', true)
         # Open the CKEDITOR dialog and pass the source effective_menu_item $('li') to the dialog
         CKEDITOR.instances[Object.keys(CKEDITOR.instances)[0]].openDialog 'effectiveMenusDialog', (dialog) ->
           dialog.effective_menu_item = $(event.currentTarget)
@@ -51,6 +52,7 @@
         item = $(@menu.data('effective-menu-new-html').replace(/:new/g, "#{unique_id}"))
 
         @menu.children('.actions').before(item)
+        @menu.data('dirty', true)
 
         CKEDITOR.instances[Object.keys(CKEDITOR.instances)[0]].openDialog 'effectiveMenusDialog', (dialog) ->
           dialog.effective_menu_item = item
@@ -165,6 +167,8 @@
       # so we delete it here
       @menu.find('meta,li.effective-menu-expand').remove()
 
+      @menu.data('dirty', true)
+
       # Collapse any empty dropdowns we may have expanded back to leafs
       @menu.find('.dropdown-menu:empty').each (index, item) ->
         item = $(item).closest('.dropdown')
@@ -192,14 +196,7 @@
     # The first dropdowns all have Depth of 1
     depthOf: (item) -> item.parentsUntil(@menu, 'li').length
 
-    # Just pass _destroyed = 1 back to rails to delete this item
-    # Rails seems to disregard new items set to the new Date.now() values anyhow
-    # Put all deleted items after the .actions div just to be tidy
-    markDestroyed: (item) ->
-      item.hide().addClass('destroyed')
-      item.find('li').addClass('destroyed')
-      item.find("input[name$='[_destroy]']").val(1)
-      @menu.children('.actions').after(item.remove())
+    markDestroyed: (item) -> item.remove()
 
     # This method is called with a Hash value
     # that is called by reference from the parent function
@@ -209,6 +206,8 @@
     # This way the saves happen all at once
 
     serialize: (retval) ->
+      return if @menu.data('dirty') != true
+
       # console.log "============ BEFORE =============="
       # @menu.find('li').each (index, item) =>
       #   item = $(item)
@@ -246,16 +245,15 @@
       # This retVal has to account for multiple effective-menus on one page
       retval[@menu.data('effective-menu-id')] = items
 
-    saveComplete: ->
-      @menu.find('.destroyed').remove()
+    saveComplete: (data) -> @menu.data('dirty', false)
 
     assignLftRgt: (parent, lft) ->
       rgt = lft + 1
 
-      parent.children('.dropdown-menu').children('li:not(.destroyed)').each (_, child) =>
+      parent.children('.dropdown-menu').children('li').each (_, child) =>
         rgt = @assignLftRgt($(child), rgt)
 
-      parent.children('li:not(.destroyed)').each (_, child) =>
+      parent.children('li').each (_, child) =>
         rgt = @assignLftRgt($(child), rgt)
 
       parent.children('.menu-item').children("input[name$='[lft]']").val(lft)
