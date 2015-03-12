@@ -108,17 +108,7 @@ Regions = {
 }
 
 Snippets = {
-  snippets: undefined
-
-  all: ->
-    if @snippets == undefined
-      $.ajax
-        url: '/effective/snippets'
-        type: 'GET'
-        dataType: 'json'
-        async: false
-        complete: (data) -> Snippets.snippets = data.responseJSON
-    @snippets
+  all: -> CKEDITOR.config['effective_regions']['snippets']
 
   build: (editor, name, values) ->
     snippet = {}
@@ -178,18 +168,7 @@ Snippets = {
 }
 
 Templates = {
-  templates: undefined
-
-  all: ->
-    if @templates == undefined
-      $.ajax
-        url: '/effective/templates'
-        type: 'GET'
-        dataType: 'json'
-        async: false
-        complete: (data) -> Templates.templates = data.responseJSON
-    @templates
-
+  all: -> CKEDITOR.config['effective_regions']['templates']
   build: (definition) -> definition
 }
 
