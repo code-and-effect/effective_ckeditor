@@ -23,10 +23,6 @@ CKEDITOR.plugins.add( 'effective_references', {
         
         var $this = this;
         
-        editor.on('saveSnapshot', function(evt) {
-            console.log('saveSnapshot');
-        });
-        
         // Force a reorder on startup to make sure all vars are set: (e.g. references store):
         editor.on('instanceReady', function(evt) {
             $this.reorderMarkers(editor);
