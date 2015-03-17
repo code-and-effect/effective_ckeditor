@@ -5,11 +5,11 @@
  *
  */
 // Register the plugin within the editor.
-CKEDITOR.plugins.add( 'references', {
+CKEDITOR.plugins.add( 'effective_references', {
 
     reference_ids: [],
     requires: 'widget',
-    icons: 'references',
+    icons: 'effectivereferences',
 
 
     // The plugin initialization logic goes inside this method.
@@ -106,7 +106,7 @@ CKEDITOR.plugins.add( 'references', {
         }));
 
         // Create a toolbar button that executes the above command.
-        editor.ui.addButton('References', {
+        editor.ui.addButton('EffectiveReferences', {
 
             // The text part of the button (if available) and tooptip.
             label: 'Insert References',

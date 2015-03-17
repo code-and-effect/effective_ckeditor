@@ -50,7 +50,7 @@ CKEDITOR.dialog.add( 'referencesDialog', function( editor ) {
 
                             editor = dialog.getParentEditor();
                             // Dynamically add existing references:
-                            $references = editor.plugins.references.editorContents(editor).find('.references ol');
+                            $references = editor.plugins.effective_references.editorContents(editor).find('.references ol');
                             $this = this;
 
                             if ($references.length > 0) {
@@ -146,11 +146,11 @@ CKEDITOR.dialog.add( 'referencesDialog', function( editor ) {
                     return;
                 } else {
                     // Insert new reference:
-                    editor.plugins.references.build(reference_data, true, editor);
+                    editor.plugins.effective_references.build(reference_data, true, editor);
                 }
             } else {
                 // Insert existing reference:
-                editor.plugins.references.build(reference_id, false, editor);
+                editor.plugins.effective_references.build(reference_id, false, editor);
             }
             // Destroy the editor so it's rebuilt properly next time:
             return;
