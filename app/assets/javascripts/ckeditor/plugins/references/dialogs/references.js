@@ -1,21 +1,20 @@
 ﻿/**
- * The footnotes dialog definition.
+ * The effective references dialog definition.
  *
- * Version 1.0.9
- * https://github.com/andykirk/CKEditorFootnotes
+ * Based on https://github.com/andykirk/CKEditorFootnotes Version 1.0.9
  * 
  */
 
 // Dialog definition.
-CKEDITOR.dialog.add( 'footnotesDialog', function( editor ) {
+CKEDITOR.dialog.add( 'referencesDialog', function( editor ) {
 
     return {
         editor_name: false,
         // Basic properties of the dialog window: title, minimum size.
-        title: 'Manage Footnotes',
+        title: 'Manage References',
         minWidth: 400,
         minHeight: 200,
-        footnotes_el: false,
+        references_el: false,
 
         // Dialog window contents definition.
         contents: [
@@ -27,19 +26,19 @@ CKEDITOR.dialog.add( 'footnotesDialog', function( editor ) {
                 // The tab contents.
                 elements: [
                     {
-                        // Text input field for the footnotes text.
+                        // Text input field for the references text.
                         type: 'textarea',
-                        id: 'new_footnote',
-                        'class': 'footnote_text',
-                        label: 'New footnote:',
+                        id: 'new_reference',
+                        'class': 'reference_text',
+                        label: 'New reference:',
                         inputStyle: 'height: 100px',
                     },
                     {
-                        // Text input field for the footnotes title (explanation).
+                        // Text input field for the references title (explanation).
                         type: 'text',
-                        id: 'footnote_id',
-                        name: 'footnote_id',
-                        label: 'No existing footnotes',
+                        id: 'reference_id',
+                        name: 'reference_id',
+                        label: 'No existing references',
 
 
                         // Called by the main setupContent call on dialog initialization.
@@ -47,25 +46,25 @@ CKEDITOR.dialog.add( 'footnotesDialog', function( editor ) {
                             var dialog = this.getDialog();
                             $el = jQuery('#' + this.domId);
 
-                            dialog.footnotes_el = $el;
+                            dialog.references_el = $el;
 
                             editor = dialog.getParentEditor();
-                            // Dynamically add existing footnotes:
-                            $footnotes = editor.plugins.footnotes.editorContents(editor).find('.footnotes ol');
+                            // Dynamically add existing references:
+                            $references = editor.plugins.references.editorContents(editor).find('.references ol');
                             $this = this;
 
-                            if ($footnotes.length > 0) {
+                            if ($references.length > 0) {
                                 if ($el.find('p').length == 0) {
-                                    $el.append('<p style="margin-bottom: 10px;"><strong>OR:</strong> Choose footnote:</p><ol class="footnotes_list"></ol>');
+                                    $el.append('<p style="margin-bottom: 10px;"><strong>OR:</strong> Choose reference:</p><ol class="references_list"></ol>');
                                 } else {
                                     $el.find('ol').empty();
                                 }
                                 
                                 var radios = '';
-                                $footnotes.find('li').each(function(){
+                                $references.find('li').each(function(){
                                     $item = jQuery(this);
-                                    var footnote_id = $item.attr('data-footnote-id');
-                                    radios += '<li style="margin-left: 15px;"><input type="radio" name="footnote_id" value="' + footnote_id + '" id="fn_' + footnote_id + '" /> <label for="fn_' + footnote_id + '" style="white-space: normal; display: inline-block; padding: 0 25px 0 5px; vertical-align: top; margin-bottom: 10px;">' + $item.find('cite').text() + '</label></li>';
+                                    var reference_id = $item.attr('data-reference-id');
+                                    radios += '<li style="margin-left: 15px;"><input type="radio" name="reference_id" value="' + reference_id + '" id="fn_' + reference_id + '" /> <label for="fn_' + reference_id + '" style="white-space: normal; display: inline-block; padding: 0 25px 0 5px; vertical-align: top; margin-bottom: 10px;">' + $item.find('cite').text() + '</label></li>';
                                 });
 
                                 $el.children('label,div').css('display', 'none');
@@ -96,7 +95,7 @@ CKEDITOR.dialog.add( 'footnotesDialog', function( editor ) {
             
             CKEDITOR.replaceAll( function( textarea, config ) {
                 // Make sure the textarea has the correct class:
-                if (!textarea.className.match(/footnote_text/)) {
+                if (!textarea.className.match(/reference_text/)) {
                     return false;
                 }
 
@@ -118,7 +117,7 @@ CKEDITOR.dialog.add( 'footnotesDialog', function( editor ) {
                 config.height = 80;
                 config.resize_enabled = false;
                 config.autoGrow_minHeight = 80;
-                config.removePlugins = 'footnotes';
+                config.removePlugins = 'references';
 
                 config.on = {
                     focus: function( evt ){
@@ -135,23 +134,23 @@ CKEDITOR.dialog.add( 'footnotesDialog', function( editor ) {
         // This method is invoked once a user clicks the OK button, confirming the dialog.
         onOk: function() {
             var dialog = this;
-            var footnote_editor = CKEDITOR.instances[dialog.editor_name];
-            var footnote_id     = dialog.getValueOf('tab-basic', 'footnote_id');
-            var footnote_data   = footnote_editor.getData();
-            footnote_editor.destroy();
+            var reference_editor = CKEDITOR.instances[dialog.editor_name];
+            var reference_id     = dialog.getValueOf('tab-basic', 'reference_id');
+            var reference_data   = reference_editor.getData();
+            reference_editor.destroy();
 
-            if (footnote_id == '') {
-                // No existing id selected, check for new footnote:
-                if (footnote_data == '') {
+            if (reference_id == '') {
+                // No existing id selected, check for new reference:
+                if (reference_data == '') {
                     // Nothing entered, so quit:
                     return;
                 } else {
-                    // Insert new footnote:
-                    editor.plugins.footnotes.build(footnote_data, true, editor);
+                    // Insert new reference:
+                    editor.plugins.references.build(reference_data, true, editor);
                 }
             } else {
-                // Insert existing footnote:
-                editor.plugins.footnotes.build(footnote_id, false, editor);
+                // Insert existing reference:
+                editor.plugins.references.build(reference_id, false, editor);
             }
             // Destroy the editor so it's rebuilt properly next time:
             return;
@@ -159,8 +158,8 @@ CKEDITOR.dialog.add( 'footnotesDialog', function( editor ) {
         
         onCancel: function() {
             var dialog = this;
-            var footnote_editor = CKEDITOR.instances[dialog.editor_name];
-            footnote_editor.destroy();
+            var reference_editor = CKEDITOR.instances[dialog.editor_name];
+            reference_editor.destroy();
         }
     };
 });
