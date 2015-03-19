@@ -286,7 +286,7 @@ CKEDITOR.plugins.add 'effective_menus',
     $('.effective-menu').effectiveMenuEditor() # Initialize the EffectiveMenus
 
     CKEDITOR.dialog.add 'effectiveMenusDialog', (editor) ->
-      {
+      definition = {
         title: 'Effective Menu Item'
         minWidth: 350,
         minHeight: 200,
@@ -455,7 +455,9 @@ CKEDITOR.plugins.add 'effective_menus',
                 onChange: (event) ->
                   if this.getValue() == true
                     this.getDialog().setValueOf('permissions', 'signed_in', false)
-                    this.getDialog().setValueOf('permissions', 'roles_mask', '')
+
+                    for role, index in ((CKEDITOR.config['effective_regions'] || {})['roles'] || [])
+                      this.getDialog().setValueOf('permissions', "role_#{role[1]}", false)
               },
               {
                 id: 'signed_in',
@@ -467,30 +469,50 @@ CKEDITOR.plugins.add 'effective_menus',
                 onChange: (event) ->
                   if this.getValue() == true
                     this.getDialog().setValueOf('permissions', 'signed_out', false)
-              },
+              }
               {
-                id: 'roles_mask',
-                type: 'text',
-                label: 'Roles Mask',
-                setup: (element) ->
-                  value = parseInt(element.children('.menu-item').children("input[name$='[roles_mask]']").val(), 10)
-                  if value > 0 then this.setValue(value) else this.setValue('')
+                id: 'roles',
+                type: 'vbox',
+                width: '100%',
+                children:
+                  [{type: 'html', html: '<p>Only visible when signed in as a user with one or more<br>of the following website roles:</p>'}].concat(
+                    for role, index in ((CKEDITOR.config['effective_regions'] || {})['roles'] || [])
+                      bit_mask = Math.pow(2, index)
+                      # role == [description, title, 'disabled' or null]   We're not using description
+                      {
+                        id: "role_#{role[1]}",
+                        type: 'checkbox',
+                        label: "#{role[1]}",
+                        className: "role_#{bit_mask}_#{role[2]}_box"
+                        setup: (element) ->
+                          this.disable() if (this.className.split('_')[2] == 'disabled')
+
+                          roles_mask = parseInt(element.children('.menu-item').children("input[name$='[roles_mask]']").val(), 10) || 0
+                          roles_mask = 0 if roles_mask == -1
+                          bit_mask = parseInt(this.className.split('_')[1], 10) || 0
+
+                          this.setValue((bit_mask & roles_mask) != 0)
+                        onClick: (event) ->
+                          if this.getValue() == true # Ensure Only visible when signed in is checked too if we have roles
+                            this.getDialog().setValueOf('permissions', 'signed_in', true)
+                            this.getDialog().setValueOf('permissions', 'signed_out', false)
+                      }
+                  )
                 commit: (element) ->
-                  if ('' + this.getValue()).length > 0
-                    element.children('.menu-item').children("input[name$='[roles_mask]']").val(this.getValue())
+                  roles_mask = 0
+
+                  for role, index in ((CKEDITOR.config['effective_regions'] || {})['roles'] || [])
+                    if this.getDialog().getValueOf('permissions', "role_#{role[1]}") == true
+                      roles_mask += Math.pow(2, index)
+
+                  if roles_mask > 0
+                    element.children('.menu-item').children("input[name$='[roles_mask]']").val(roles_mask)
                   else if this.getDialog().getValueOf('permissions', 'signed_in') == true
                     element.children('.menu-item').children("input[name$='[roles_mask]']").val(0)
                   else if this.getDialog().getValueOf('permissions', 'signed_out') == true
                     element.children('.menu-item').children("input[name$='[roles_mask]']").val(-1)
                   else
                     element.children('.menu-item').children("input[name$='[roles_mask]']").val('')
-                onKeyup: (event) ->
-                  if ('' + this.getValue()).length > 0
-                    this.getDialog().setValueOf('permissions', 'signed_in', true)
-                    this.getDialog().setValueOf('permissions', 'signed_out', false)
-                validate: ->
-                  if ('' + this.getValue()).length > 0
-                    CKEDITOR.dialog.validate.integer('roles_mask must be an integer').apply(this)
               }
             ]
           },
@@ -545,3 +567,18 @@ CKEDITOR.plugins.add 'effective_menus',
           this.effective_menu_item.remove() if this.effective_menu_item.hasClass('new-item')
           this.effective_menu_item = undefined
       }
+
+      # console.log definition
+      # definition
+
+      # # So we've built the definition above, now we're going to add one checkbox each for all roles
+      # elements = definition['contents'][1]['elements']
+
+      # for effective_role in CKEDITOR.config['effective_regions']['roles']
+      #   description = effective_role[0]
+      #   role = effective_role[1]
+      #   disabled = effective_role[2]
+
+
+
+      # definition
