@@ -406,6 +406,8 @@ CKEDITOR.plugins.add 'effective_menus',
                   if this.getDialog().getValueOf('item', 'source') == 'Page'
                     element.children('.menu-item').children("input[name$='[menuable_id]']").val(this.getValue())
                     element.children('.menu-item').children("input[name$='[menuable_type]']").val('Effective::Page')
+                  else if this.getDialog().getValueOf('item', 'source') == 'Dropdown'
+                    # Nothing
                   else
                     element.children('.menu-item').children("input[name$='[menuable_id]']").val('')
                     element.children('.menu-item').children("input[name$='[menuable_type]']").val('')
