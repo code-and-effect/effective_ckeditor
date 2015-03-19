@@ -108,7 +108,7 @@ Regions = {
 }
 
 Snippets = {
-  all: -> CKEDITOR.config['effective_regions']['snippets']
+  all: -> ((CKEDITOR.config['effective_regions'] || {})['snippets'] || {})
 
   build: (editor, name, values) ->
     snippet = {}
@@ -168,7 +168,7 @@ Snippets = {
 }
 
 Templates = {
-  all: -> CKEDITOR.config['effective_regions']['templates']
+  all: -> ((CKEDITOR.config['effective_regions'] || {})['templates'] || {})
   build: (definition) -> definition
 }
 
