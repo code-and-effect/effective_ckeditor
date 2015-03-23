@@ -1,4 +1,4 @@
-//= require_tree ./vendor
+//= require ./vendor/jquery.cookie
 //= require ./effective_ckeditor/before_init
 
 //= require ./ckeditor/ckeditor
