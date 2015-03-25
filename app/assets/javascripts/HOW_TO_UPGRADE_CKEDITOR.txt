@@ -6,3 +6,7 @@
 6.) Optimized Source
 7.) Unzip the ckeditor.zip over the ./ckeditor/ directory
 8.) Delete the ./ckeditor/samples/ directory
+
+9.) cd effective_ckeditor/app/assets/javascripts/
+10.) chmod +x after_update.sh
+11.) ./after_update.sh
