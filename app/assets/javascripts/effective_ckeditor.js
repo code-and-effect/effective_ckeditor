@@ -4,7 +4,6 @@
 
 //= require ./ckeditor/ckeditor
 //= require ./ckeditor/styles
-
 //= require ./ckeditor/lang/en
 
 //= require ./ckeditor/plugins/effective_assets/plugin

@@ -24,6 +24,7 @@ for i in ./ckeditor/skins/moonocolor/*.css; do
   replace="url(<%= asset_path('ckeditor\\/skins\\/moonocolor\\/images\\/lock-open.png') %>)"
   sed -i '' -e "s/${search}/${replace}/g" "${i}.erb"
 
+
   # Lock.png
   search="url(images\\/lock.png)"
   replace="url(<%= asset_path('ckeditor\\/skins\\/moonocolor\\/images\\/lock.png') %>)"

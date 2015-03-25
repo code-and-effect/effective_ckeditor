@@ -2,7 +2,7 @@
  * The effective references dialog definition.
  *
  * Based on https://github.com/andykirk/CKEditorFootnotes Version 1.0.9
- * 
+ *
  */
 
 // Dialog definition.
@@ -59,7 +59,7 @@ CKEDITOR.dialog.add( 'referencesDialog', function( editor ) {
                                 } else {
                                     $el.find('ol').empty();
                                 }
-                                
+
                                 var radios = '';
                                 $references.find('li').each(function(){
                                     $item = jQuery(this);
@@ -90,9 +90,9 @@ CKEDITOR.dialog.add( 'referencesDialog', function( editor ) {
             CKEDITOR.on( 'instanceLoaded', function( evt ) {
                 dialog.editor_name = evt.editor.name;
             } );
-            
+
             var current_editor_id = dialog.getParentEditor().id;
-            
+
             CKEDITOR.replaceAll( function( textarea, config ) {
                 // Make sure the textarea has the correct class:
                 if (!textarea.className.match(/reference_text/)) {
@@ -118,6 +118,7 @@ CKEDITOR.dialog.add( 'referencesDialog', function( editor ) {
                 config.resize_enabled = false;
                 config.autoGrow_minHeight = 80;
                 config.removePlugins = 'references';
+                config.customConfig = '';
 
                 config.on = {
                     focus: function( evt ){
@@ -155,7 +156,7 @@ CKEDITOR.dialog.add( 'referencesDialog', function( editor ) {
             // Destroy the editor so it's rebuilt properly next time:
             return;
         },
-        
+
         onCancel: function() {
             var dialog = this;
             var reference_editor = CKEDITOR.instances[dialog.editor_name];
