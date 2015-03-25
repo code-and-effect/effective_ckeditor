@@ -6,11 +6,8 @@
  */
 // Register the plugin within the editor.
 CKEDITOR.plugins.add( 'effective_references', {
-
     reference_ids: [],
     requires: 'widget',
-    icons: 'effectivereferences',
-
 
     // The plugin initialization logic goes inside this method.
     init: function(editor) {
@@ -20,9 +17,9 @@ CKEDITOR.plugins.add( 'effective_references', {
         // Add some CSS tweaks:
         var css = '.references{background:#eee; padding:1px 15px;} .references cite{font-style: normal;}';
         CKEDITOR.addCss(css);
-        
+
         var $this = this;
-        
+
         // Force a reorder on startup to make sure all vars are set: (e.g. references store):
         editor.on('instanceReady', function(evt) {
             $this.reorderMarkers(editor);
@@ -127,7 +124,7 @@ CKEDITOR.plugins.add( 'effective_references', {
     },
 
     build: function(reference, is_new, editor) {
-        
+
         if (is_new) {
             // Generate new id:
             reference_id = this.generateReferenceId();
@@ -140,7 +137,7 @@ CKEDITOR.plugins.add( 'effective_references', {
         var reference_marker = '<sup data-reference-id="' + reference_id + '">X</sup>';
 
         editor.insertHtml(reference_marker);
-        
+
         if (is_new) {
             editor.fire('lockSnapshot');
             this.addReference(this.buildReference(reference_id, reference, false, editor), editor);
@@ -210,7 +207,7 @@ CKEDITOR.plugins.add( 'effective_references', {
             order: [],
             occurrences: {}
         };
-        
+
         // Check that there's a references section. If it's been deleted the markers are useless:
         if ($contents.find('.references').length == 0) {
             $contents.find('sup[data-reference-id]').remove();
@@ -263,7 +260,7 @@ CKEDITOR.plugins.add( 'effective_references', {
         for (i; i < l; i++) {
             reference_id   = data.order[i];
             reference_text = $contents.find('.references [data-reference-id=' + reference_id + '] cite').html();
-            // If the references text can't be found in the editor, it may be in the tmp store 
+            // If the references text can't be found in the editor, it may be in the tmp store
             // following a cut:
             if (!reference_text) {
                 reference_text = editor.references_tmp[reference_id];
@@ -271,8 +268,8 @@ CKEDITOR.plugins.add( 'effective_references', {
             references += this.buildReference(reference_id, reference_text, data, editor);
             // Store the references for later use (post cut/paste):
             editor.references_store[reference_id] = reference_text;
-        }       
-        
+        }
+
         // Insert the references into the list:
         $contents.find('.references ol').html(references);
 

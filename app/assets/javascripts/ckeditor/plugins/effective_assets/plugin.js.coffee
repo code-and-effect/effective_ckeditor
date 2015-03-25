@@ -1,14 +1,12 @@
 # This plugin just opens the Snippet dialog
 
 CKEDITOR.plugins.add 'effective_assets',
-  icons: 'effectiveassets',
-  hidpi: true,
   init: (editor) ->
       editor.ui.addButton 'EffectiveAssets', {label: 'Insert File', command: 'openEffectiveAssetsSnippetDialog'}
       editor.addCommand('openEffectiveAssetsSnippetDialog', OpenEffectiveAssetsSnippetDialog)
 
 OpenEffectiveAssetsSnippetDialog = {
-  exec: (editor) -> 
+  exec: (editor) ->
     if (command = editor.getCommand('effective_asset'))
       command.exec(editor)
     else

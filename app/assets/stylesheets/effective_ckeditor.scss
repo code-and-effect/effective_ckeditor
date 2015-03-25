@@ -1,3 +1,10 @@
 @import 'effective_ckeditor/layout';
 @import 'effective_ckeditor/overrides';
-@import 'effective_ckeditor/menu_editor';
+
+@import 'effective_ckeditor/plugins/effective_assets';
+@import 'effective_ckeditor/plugins/effective_menus';
+@import 'effective_ckeditor/plugins/effective_references';
+@import 'effective_ckeditor/plugins/effective_regions';
+@import 'effective_ckeditor/plugins/oembed';
+@import 'effective_ckeditor/plugins/showblocks';
+

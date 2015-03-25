@@ -33,9 +33,9 @@ SaveAll = {
     try
       button = $("##{this.uiItems[0]._.id}").find('.cke_button__save_icon')
 
-      button.css('background-image', 'url(/assets/ckeditor/plugins/effective_regions/icons/saving.png)')
+      button.addClass('saving')
       setTimeout(
-        -> button.css('background-image', 'url(/assets/ckeditor/plugins/effective_regions/icons/save.png)')
+        -> button.removeClass('saving')
         2000
       )
 
@@ -194,8 +194,6 @@ BuildInsertSnippetDropdown = (editor, all_snippets) ->
 
 CKEDITOR.plugins.add 'effective_regions',
   requires: 'widget',
-  icons: 'save,exit',
-  hidpi: true,
   init: (editor) ->
     # Saving
     editor.ui.addButton 'Save', {label: 'Save', command: 'effectiveRegionsSaveAll'}
