@@ -27,10 +27,12 @@ for i in ./ckeditor/skins/moonocolor/*.css; do
   # Lock.png
   search="url(images\\/lock.png)"
   replace="url(<%= asset_path('ckeditor\\/skins\\/moonocolor\\/images\\/lock.png') %>)"
+  sed -i '' -e "s/${search}/${replace}/g" "${i}.erb"
 
   # Refresh.png
   search="url(images\\/refresh.png)"
   replace="url(<%= asset_path('ckeditor\\/skins\\/moonocolor\\/images\\/refresh.png') %>)"
+  sed -i '' -e "s/${search}/${replace}/g" "${i}.erb"
 
   ### Hi DPI
 
@@ -59,5 +61,6 @@ for i in ./ckeditor/skins/moonocolor/*.css; do
   replace="url(<%= asset_path('ckeditor\\/skins\\/moonocolor\\/images\\/hidpi\\/refresh.png') %>)"
   sed -i '' -e "s/${search}/${replace}/g" "${i}.erb"
 
+  echo 'Done.  Thanks and have a seriously lovely day.'
 done
 
