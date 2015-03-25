@@ -61,7 +61,6 @@ for i in ./ckeditor/skins/moonocolor/*.css; do
   search="url(images\\/hidpi\\/refresh.png)"
   replace="url(<%= asset_path('ckeditor\\/skins\\/moonocolor\\/images\\/hidpi\\/refresh.png') %>)"
   sed -i '' -e "s/${search}/${replace}/g" "${i}.erb"
-
-  echo 'Done.  Thanks and have a seriously lovely day.'
 done
 
+echo 'Done rewriting asset paths.  Thanks and have a seriously lovely day.'
