@@ -77,6 +77,7 @@ initEditor = (editor_div) ->
       { name: 'html', items: ['Sourcedialog', '-', 'ShowBlocks'] },
       { name: 'editing', items: ['Undo', 'Redo'] },
       { name: 'clipboard', items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord'] },
+      { name: 'justify', items: ['JustifyLeft', 'JustifyCenter', 'JustifyRight']}
       { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'] },
       ['Exit']
       '/',
