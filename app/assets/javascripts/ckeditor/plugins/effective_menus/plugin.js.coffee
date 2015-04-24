@@ -95,7 +95,7 @@
         @menu.children('.actions').children('.add-item').hide()
         item.removeClass('open').find('.open').removeClass('open')
 
-        event.originalEvent.dataTransfer.setData('text/html', item[0].outerHTML)
+        event.originalEvent.dataTransfer.setData('Text', item[0].outerHTML)
 
         item.css('opacity', '0.4') # Show it slightly removed from the DOM
         @menu.addClass('dragging')
@@ -133,7 +133,7 @@
         # Don't allow to drop into myself or my own children
         return false if !@draggable? || @draggable.is(item) || @draggable.find(item).length > 0
 
-        new_item = $(event.originalEvent.dataTransfer.getData('text/html'))
+        new_item = $(event.originalEvent.dataTransfer.getData('Text'))
 
         item.before(new_item)
         @draggable.remove()
