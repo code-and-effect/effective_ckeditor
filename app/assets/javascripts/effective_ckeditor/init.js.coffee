@@ -31,6 +31,8 @@ init = ->
         affixBootstrapMenu(editor_div)
         editor_div.on 'click', -> try initEditor(this)
 
+    initTemplates()
+
 initEditor = (editor_div) ->
   region = $(editor_div).data('effective-ckeditor')
 
@@ -102,6 +104,13 @@ initEditor = (editor_div) ->
       ['Exit']
     ]
   )
+
+initTemplates = ->
+  templates = ((CKEDITOR.config['effective_regions'] || {})['templates'] || {})
+
+  CKEDITOR.addTemplates 'effective_regions',
+    imagesPath: CKEDITOR.getUrl( window.location.protocol + '//' + window.location.host + '/assets/effective/templates/' ),
+    templates: template for template in templates
 
 promptToSaveIfDirty = (event) ->
   dirty = false

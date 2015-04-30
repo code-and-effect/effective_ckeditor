@@ -167,11 +167,6 @@ Snippets = {
     snippet
 }
 
-Templates = {
-  all: -> ((CKEDITOR.config['effective_regions'] || {})['templates'] || {})
-  build: (definition) -> definition
-}
-
 BuildInsertSnippetDropdown = (editor, all_snippets) ->
   editor.ui.addRichCombo 'InsertSnippet',
     label: 'Insert Snippet',
@@ -218,9 +213,3 @@ CKEDITOR.plugins.add 'effective_regions',
 
       editor.widgets.add(name, snippet)
       CKEDITOR.dialog.add(name, CKEDITOR.getUrl(window.location.protocol + '//' + window.location.host + snippet.dialog_url)) if snippet.dialog_url
-
-# Templates
-# these are loaded once per page, not for each editor (as the snippets are above)
-CKEDITOR.addTemplates 'effective_regions',
-  imagesPath: CKEDITOR.getUrl( window.location.protocol + '//' + window.location.host + '/assets/effective/templates/' ),
-  templates: Templates.build(template) for template in Templates.all()
