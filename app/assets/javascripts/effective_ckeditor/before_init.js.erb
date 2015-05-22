@@ -1,7 +1,7 @@
 window['CKEDITOR_BASEPATH'] = "/assets/ckeditor/";
 
 window.CKEDITOR_ASSETS_MAPPING = {
-<% Rails.application.assets.each_logical_path(->(path){ (path.include?('ckeditor/plugins/') || path.include?('ckeditor/skins/') || path.include?('effective/snippets/') || path.include?('effective/templates/') || path.include?('ckeditor/contents.css')) && !path.include?('effective_ckeditor')}) do |asset| %>
+<% Rails.application.assets.each_logical_path(->(path, _){ (path.include?('ckeditor/plugins/') || path.include?('ckeditor/skins/') || path.include?('effective/snippets/') || path.include?('effective/templates/') || path.include?('ckeditor/contents.css')) && !path.include?('effective_ckeditor')}) do |asset| %>
   "<%= asset %>": "<%= asset_path(asset) %>",
 <% end %>
 }
