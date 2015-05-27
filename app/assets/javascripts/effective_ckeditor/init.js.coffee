@@ -84,7 +84,7 @@ initEditor = (editor_div) ->
       ['Exit']
       '/',
       { name: 'definedstyles', items: ['Format'] },
-      { name: 'links', items: ['Link', 'Unlink'] },
+      { name: 'links', items: ['Link', 'Unlink', '-', 'Anchor'] },
       { name: 'insert', items: ['Image', 'oembed', 'EffectiveAssets'] },
       { name: 'lists', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'] },
       { name: 'insert2', items: ['Table', 'EffectiveReferences', 'Blockquote', 'HorizontalRule', 'PageBreak'] },
