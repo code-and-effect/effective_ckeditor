@@ -10,3 +10,4 @@
 9.) cd effective_ckeditor/app/assets/javascripts/
 10.) chmod +x after_update.sh
 11.) ./after_update.sh
+12.) Go into git and revert any removed plugins/effective_*/ files
