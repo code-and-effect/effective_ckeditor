@@ -1,5 +1,4 @@
 require "effective_ckeditor/engine"
-require "effective_ckeditor/version"
 
 module EffectiveCkeditor
 
