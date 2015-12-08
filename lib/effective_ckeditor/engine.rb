@@ -11,7 +11,7 @@ module EffectiveCkeditor
         'effective_ckeditor.css',
         'ckeditor/contents.css',
         'ckeditor/plugins/*',
-        'ckeditor/skins/*',
+        'ckeditor/skins/moonocolor/*',
         'effective/snippets/*',
       ]
 
