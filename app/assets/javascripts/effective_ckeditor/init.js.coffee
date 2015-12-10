@@ -62,6 +62,7 @@ initEditor = (editor_div) ->
     shiftEnterMode: shiftEnterMode
     startupOutlineBlocks: startupOutlineBlocks
     disableNativeTableHandles: true
+    disableNativeSpellChecker: false
     sharedSpaces:
       top: 'effective-ckeditor-top'
     startupShowBorders: true
