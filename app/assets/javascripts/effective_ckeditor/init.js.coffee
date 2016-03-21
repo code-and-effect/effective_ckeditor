@@ -53,7 +53,7 @@ initEditor = (editor_div) ->
       startupOutlineBlocks = false
       toolbar = 'simple'
 
-  CKEDITOR.inline(editor_div.id,
+  ckeditor = CKEDITOR.inline(editor_div.id,
     toolbar: toolbar
     allowedSnippets: $(editor_div).data('allowed-snippets')
     effectiveRegionType: region
@@ -105,6 +105,11 @@ initEditor = (editor_div) ->
       ['Exit']
     ]
   )
+
+  ckeditor.on 'insertElement', (event) ->
+    element = $(event.data.$)
+    if element.is('table')
+      element.removeAttr('style').addClass('table')
 
 initTemplates = ->
   templates = ((CKEDITOR.config['effective_regions'] || {})['templates'] || {})
