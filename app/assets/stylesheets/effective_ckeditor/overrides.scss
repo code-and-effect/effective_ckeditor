@@ -43,3 +43,12 @@ span.cke_button__exit_label {
             box-shadow: 0px 0px 6px #4195fc;
   }
 }
+
+// Make images look reasonable
+span.cke_image_nocaption {
+  max-width: 100%;
+}
+
+span.cke_image_resizer_wrapper {
+  max-width: 100%;
+}
