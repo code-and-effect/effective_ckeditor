@@ -1,7 +1,5 @@
 SaveAll = {
   instanceData: (instance) ->
-    instance.resetDirty()
-
     snippets = {} # This is the Data we're going to post to the server
     snippet_ids = [] # This keeps track html classes we need to later replace
 
@@ -30,14 +28,8 @@ SaveAll = {
 
   exec: (editor) ->
     # Show a checkmark on the Save button
-    try
-      button = $("##{this.uiItems[0]._.id}").find('.cke_button__save_icon')
-
-      button.addClass('saving')
-      setTimeout(
-        -> button.removeClass('saving')
-        2000
-      )
+    button = $("##{this.uiItems[0]._.id}").find('.cke_button__save_icon')
+    try button.addClass('saving')
 
     url = window.location.protocol + '//' + window.location.host + '/edit' + window.location.pathname
 
@@ -55,9 +47,17 @@ SaveAll = {
       dataType: 'json'
       data: { effective_regions: regionData, effective_menus: menuData }
       async: false
-      complete: (response) ->
+      complete: (response) =>
+        instance.resetDirty() for name, instance of CKEDITOR.instances
+
         data = response['responseJSON'] || {}
         $('.effective-menu').effectiveMenuEditor('saveComplete', data['effective_menus'])
+
+        setTimeout(
+          -> button.removeClass('saving')
+          200
+        )
+
         location.reload(true) if data['refresh'] == true
 }
 
