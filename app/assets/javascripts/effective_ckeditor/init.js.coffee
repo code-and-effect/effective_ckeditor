@@ -73,7 +73,8 @@ initEditor = (editor_div) ->
     templates_replaceContent: false
     filebrowserWindowHeight: 600
     filebrowserWindowWidth: 800
-    filebrowserBrowseUrl: '/effective/assets?only=images'
+    filebrowserBrowseUrl: '/effective/assets'
+    filebrowserImageBrowseUrl: '/effective/assets?only=images'
     referencesEditorSelector:"'#' + editor.name"
     toolbar_full: [
       { name: 'save', items: ['Save', '-', 'NewPage'] },
