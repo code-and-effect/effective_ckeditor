@@ -1,3 +1,3 @@
 module EffectiveCkeditor
-  VERSION = '1.7.12'.freeze
+  VERSION = '1.7.13'.freeze
 end
