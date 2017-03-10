@@ -143,3 +143,23 @@ affixBootstrapMenu = (editor_div) ->
     dropdown.on 'click.bs.dropdown', (event) -> event.preventDefault()
     dropdown.on 'click', (event) ->
       $(this).removeClass('open') and event.stopPropagation() if $(this).hasClass('open')
+
+
+# This removes the width and height attributes from being set on an image
+# The attributes will come back if you drag & drop resize the image
+CKEDITOR.on 'dialogDefinition', (ev) ->
+  dialogName = ev.data.name
+  dialogDefinition = ev.data.definition
+
+  if (dialogName == 'image2')
+    try
+      dialogDefinition.contents['0'].elements['2'].style = 'display: none;'  # Hide width/height fields entirely
+
+      widthDefinition = dialogDefinition.contents['0'].elements['2'].children['0']
+      heightDefinition = dialogDefinition.contents['0'].elements['2'].children['1']
+
+      if widthDefinition['label'] == 'Width'
+        widthDefinition.commit = (widget) -> widget.setData('width', null)
+
+      if heightDefinition['label'] == 'Height'
+        heightDefinition.commit = (widget) -> widget.setData('height', null)
