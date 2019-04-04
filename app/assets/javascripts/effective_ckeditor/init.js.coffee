@@ -66,7 +66,7 @@ initEditor = (editor_div) ->
     sharedSpaces:
       top: 'effective-ckeditor-top'
     startupShowBorders: true
-    extraPlugins: 'effective_regions,effective_assets,effective_menus,effective_references'
+    extraPlugins: 'base64image,effective_regions,effective_assets,effective_menus,effective_references'
     format_tags: 'p;h1;h2;h3;h4;h5;h6;pre;div'
     templates: 'effective_regions'
     templates_files: []
@@ -87,9 +87,10 @@ initEditor = (editor_div) ->
       '/',
       { name: 'definedstyles', items: ['Format'] },
       { name: 'links', items: ['Link', 'Unlink', '-', 'Anchor'] },
-      { name: 'insert', items: ['Image', 'oembed', 'EffectiveAssets'] },
+      { name: 'insert', items: ['Image', 'base64image', 'oembed'] },
       { name: 'lists', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'] },
       { name: 'insert2', items: ['Table', 'EffectiveReferences', 'Blockquote', 'HorizontalRule', 'PageBreak'] },
+      { name: 'colors', items: ['TextColor', 'BGColor'] },
       { name: 'snippets', items: ['Templates', 'InsertSnippet'] }
     ]
     toolbar_snippets: [
@@ -145,21 +146,21 @@ affixBootstrapMenu = (editor_div) ->
       $(this).removeClass('open') and event.stopPropagation() if $(this).hasClass('open')
 
 
-# This removes the width and height attributes from being set on an image
-# The attributes will come back if you drag & drop resize the image
-CKEDITOR.on 'dialogDefinition', (ev) ->
-  dialogName = ev.data.name
-  dialogDefinition = ev.data.definition
+# # This removes the width and height attributes from being set on an image
+# # The attributes will come back if you drag & drop resize the image
+# CKEDITOR.on 'dialogDefinition', (ev) ->
+#   dialogName = ev.data.name
+#   dialogDefinition = ev.data.definition
 
-  if (dialogName == 'image2')
-    try
-      dialogDefinition.contents['0'].elements['2'].style = 'display: none;'  # Hide width/height fields entirely
+#   if (dialogName == 'image2')
+#     try
+#       dialogDefinition.contents['0'].elements['2'].style = 'display: none;'  # Hide width/height fields entirely
 
-      widthDefinition = dialogDefinition.contents['0'].elements['2'].children['0']
-      heightDefinition = dialogDefinition.contents['0'].elements['2'].children['1']
+#       widthDefinition = dialogDefinition.contents['0'].elements['2'].children['0']
+#       heightDefinition = dialogDefinition.contents['0'].elements['2'].children['1']
 
-      if widthDefinition['label'] == 'Width'
-        widthDefinition.commit = (widget) -> widget.setData('width', null)
+#       if widthDefinition['label'] == 'Width'
+#         widthDefinition.commit = (widget) -> widget.setData('width', null)
 
-      if heightDefinition['label'] == 'Height'
-        heightDefinition.commit = (widget) -> widget.setData('height', null)
+#       if heightDefinition['label'] == 'Height'
+#         heightDefinition.commit = (widget) -> widget.setData('height', null)

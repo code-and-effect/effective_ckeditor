@@ -1,4 +1,4 @@
-1.) Go to www.ckeditor.com
+1.) Go to https://ckeditor.com/cke4/builder
 2.) Customize and Download
 3.) Upload the build-config.js from this ./ckeditor/
 4.) Select Skin Moono Color skin (scroll to the right)
