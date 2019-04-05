@@ -7,9 +7,11 @@ CKEDITOR.plugins.add 'effective_assets',
 
 OpenEffectiveAssetsSnippetDialog = {
   exec: (editor) ->
-    if (command = editor.getCommand('effective_asset'))
+    if (command = editor.getCommand('effective_assets'))
+      command.exec(editor)
+    else if (command = editor.getCommand('ck_asset'))
       command.exec(editor)
     else
-      alert('This function is currently disabled.  Please install EffectiveAssets gem.')
+      alert('This function is currently disabled.')
 }
 

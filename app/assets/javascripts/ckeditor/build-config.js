@@ -53,7 +53,6 @@ var CKBUILDER_CONFIG = {
 		'tests'
 	],
 	plugins : {
-		'base64image' : 1,
 		'basicstyles' : 1,
 		'blockquote' : 1,
 		'clipboard' : 1,
@@ -81,7 +80,6 @@ var CKBUILDER_CONFIG = {
 		'newpage' : 1,
 		'oembed' : 1,
 		'pagebreak' : 1,
-		'pastebase64' : 1,
 		'pastefromword' : 1,
 		'pastetext' : 1,
 		'removeformat' : 1,

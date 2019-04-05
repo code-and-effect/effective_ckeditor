@@ -73,8 +73,8 @@ initEditor = (editor_div) ->
     templates_replaceContent: false
     filebrowserWindowHeight: 600
     filebrowserWindowWidth: 800
-    filebrowserBrowseUrl: '/effective/assets'
-    filebrowserImageBrowseUrl: '/effective/assets?only=images'
+    filebrowserBrowseUrl: window.CKEDITOR_FILE_BROWSE_URL
+    filebrowserImageBrowseUrl: window.CKEDITOR_FILE_BROWSE_URL + '?only=images'
     referencesEditorSelector:"'#' + editor.name"
     toolbar_full: [
       { name: 'save', items: ['Save', '-', 'NewPage'] },
@@ -87,7 +87,7 @@ initEditor = (editor_div) ->
       '/',
       { name: 'definedstyles', items: ['Format'] },
       { name: 'links', items: ['Link', 'Unlink', '-', 'Anchor'] },
-      { name: 'insert', items: ['Image', 'base64image', 'oembed'] },
+      { name: 'insert', items: ['Image', 'oembed'] },
       { name: 'lists', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'] },
       { name: 'insert2', items: ['Table', 'EffectiveReferences', 'Blockquote', 'HorizontalRule', 'PageBreak'] },
       { name: 'colors', items: ['TextColor', 'BGColor'] },

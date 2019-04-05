@@ -19,3 +19,9 @@ window.CKEDITOR_GETURL = function( resource ) {
 
   return resource;
 }
+
+<% if defined?(EffectiveAssets) %>
+  window.CKEDITOR_FILE_BROWSE_URL = '/effective/assets'
+<% else %>
+  window.CKEDITOR_FILE_BROWSE_URL = '/effective/ck_assets'
+<% end %>
