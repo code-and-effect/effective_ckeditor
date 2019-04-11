@@ -19,7 +19,8 @@ init = ->
   if ckeditors.length
     $('body').prepend("<div id='effective-ckeditor-top'></div>").addClass('effective-ckeditor-editting')
 
-    $(window).on 'beforeunload', (event) -> promptToSaveIfDirty(event)
+    $(window).on 'beforeunload', (event) -> promptToSaveIfDirtyWindow(event)
+    $(document).on 'click', 'a', (event) -> promptToSaveIfDirtyLink(event)
     $(window).on 'unload', (event) -> $.cookie('effective_regions_editting', '', {path: '/', expires: -1})
 
     ckeditors.each ->
@@ -120,7 +121,7 @@ initTemplates = ->
     imagesPath: CKEDITOR.getUrl( window.location.protocol + '//' + window.location.host + '/assets/effective/templates/' ),
     templates: template for template in templates
 
-promptToSaveIfDirty = (event) ->
+promptToSaveIfDirtyWindow = (event) ->
   dirty = false
 
   for name, instance of CKEDITOR.instances
@@ -132,6 +133,17 @@ promptToSaveIfDirty = (event) ->
     'You have unsaved changes'
   else
     event.stopPropagation()
+
+promptToSaveIfDirtyLink = (event) ->
+  dirty = false
+
+  for name, instance of CKEDITOR.instances
+    if instance.checkDirty()
+      dirty = true
+      break
+
+  if dirty && !confirm('You have unsaved changes. Really leave page?')
+    event.preventDefault()
 
 affixBootstrapMenu = (editor_div) ->
   dropdown_menu = editor_div.closest('.dropdown-menu')
