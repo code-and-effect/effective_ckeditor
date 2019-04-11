@@ -11,3 +11,4 @@
 10.) chmod +x after_update.sh
 11.) ./after_update.sh
 12.) Go into git and revert any removed plugins/effective_*/ files
+13.) In the skins .css files, look for strings like "url(icons.png?t=8b53603e8)" and replace with "url(<%= asset_path('ckeditor/skins/moonocolor/icons.png') %>)"
