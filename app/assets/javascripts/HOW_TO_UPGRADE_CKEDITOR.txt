@@ -1,5 +1,5 @@
 1.) Go to https://ckeditor.com/cke4/builder
-2.) Customize and Download
+2.) Click Upload build-config.js
 3.) Upload the build-config.js from this ./ckeditor/
 4.) Select Skin Moono Color skin (scroll to the right)
 5.) Language English
@@ -11,4 +11,9 @@
 10.) chmod +x after_update.sh
 11.) ./after_update.sh
 12.) Go into git and revert any removed plugins/effective_*/ files
-13.) In the skins .css files, look for strings like "url(icons.png?t=8b53603e8)" and replace with "url(<%= asset_path('ckeditor/skins/moonocolor/icons.png') %>)"
+13.) In the skins .css files, make two search and replaces:
+
+Search for url(icons.png?t= and find the correct number.
+
+replace: "url(icons.png?t=8b53603e8)" with "url(<%= asset_path('ckeditor/skins/moonocolor/icons.png') %>)"
+replace: "url(icons_hidpi.png?t=8b53603e8)" with "url(<%= asset_path('ckeditor/skins/moonocolor/icons_hidpi.png') %>)"0
