@@ -20,8 +20,11 @@ init = ->
     $('body').prepend("<div id='effective-ckeditor-top'></div>").addClass('effective-ckeditor-editting')
 
     $(window).on 'beforeunload', (event) -> promptToSaveIfDirtyWindow(event)
-    $(document).on 'click', 'a', (event) -> promptToSaveIfDirtyLink(event)
     $(window).on 'unload', (event) -> $.cookie('effective_regions_editting', '', {path: '/', expires: -1})
+
+    $(document).on 'click', 'a', (event) -> 
+      unless $(event.currentTarget).closest('.cke_inner,.cke_dialog').length > 0
+        promptToSaveIfDirtyLink(event) 
 
     ckeditors.each ->
       editor_div = $(this)
