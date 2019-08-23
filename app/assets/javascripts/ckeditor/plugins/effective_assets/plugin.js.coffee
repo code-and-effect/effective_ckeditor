@@ -7,7 +7,7 @@ CKEDITOR.plugins.add 'effective_assets',
 
 OpenEffectiveAssetsSnippetDialog = {
   exec: (editor) ->
-    if (command = editor.getCommand('effective_assets'))
+    if (command = editor.getCommand('effective_asset'))
       command.exec(editor)
     else if (command = editor.getCommand('ck_asset'))
       command.exec(editor)

@@ -22,9 +22,9 @@ init = ->
     $(window).on 'beforeunload', (event) -> promptToSaveIfDirtyWindow(event)
     $(window).on 'unload', (event) -> $.cookie('effective_regions_editting', '', {path: '/', expires: -1})
 
-    $(document).on 'click', 'a', (event) -> 
-      unless $(event.currentTarget).closest('.cke_inner,.cke_dialog').length > 0
-        promptToSaveIfDirtyLink(event) 
+    $(document).on 'click', 'a', (event) ->
+      unless $(event.currentTarget).closest('.cke_inner,.cke_dialog,.cke_widget_wrapper').length > 0
+        promptToSaveIfDirtyLink(event)
 
     ckeditors.each ->
       editor_div = $(this)
@@ -91,7 +91,7 @@ initEditor = (editor_div) ->
       '/',
       { name: 'definedstyles', items: ['Format'] },
       { name: 'links', items: ['Link', 'Unlink', '-', 'Anchor'] },
-      { name: 'insert', items: ['Image', 'oembed'] },
+      { name: 'insert', items: ['Image', 'EffectiveAssets', 'oembed'] },
       { name: 'lists', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'] },
       { name: 'insert2', items: ['Table', 'EffectiveReferences', 'Blockquote', 'HorizontalRule', 'PageBreak'] },
       { name: 'colors', items: ['TextColor', 'BGColor'] },
