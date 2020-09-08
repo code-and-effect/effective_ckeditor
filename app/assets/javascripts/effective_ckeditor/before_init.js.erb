@@ -1,9 +1,19 @@
 window['CKEDITOR_BASEPATH'] = "/assets/ckeditor/";
 
+<% sprockets = (Rails.application.assets || environment) %>
+<% whitelist = ['ckeditor/plugins/', 'ckeditor/skins/', 'effective/snippets/', 'effective/templates/', 'ckeditor/contents.css'] %>
+<% blacklist = ['effective_ckeditor'] %>
+
 window.CKEDITOR_ASSETS_MAPPING = {
-<% (Rails.application.assets || environment).each_logical_path(->(path, _) { (path.include?('ckeditor/plugins/') || path.include?('ckeditor/skins/') || path.include?('effective/snippets/') || path.include?('effective/templates/') || path.include?('ckeditor/contents.css')) && !path.include?('effective_ckeditor')}) do |asset| %>
-  "<%= asset %>": "<%= asset_path(asset) %>",
-<% end %>
+  <% if sprockets.respond_to?(:each_file) %>
+    <% sprockets.each_file.select { |path| whitelist.any? { |str| path.include?(str) } && blacklist.none? { |str| path.include?(str) } }.each do |asset| %>
+      "<%= asset %>": "<%= asset_path(asset) %>",
+    <% end %>
+  <% else %>
+    <% sprockets.each_logical_path(->(path, _) { whitelist.any? { |str| path.include?(str) } && blacklist.none? { |str| path.include?(str) } }) do |asset| %>
+      "<%= asset %>": "<%= asset_path(asset) %>",
+    <% end %>
+  <% end %>
 }
 
 window.CKEDITOR_GETURL = function( resource ) {
